@@ -75,7 +75,7 @@ async fn handle_scan(Json(body): Json<ScanRequest>) -> Json<ScanResponse> {
 }
 
 async fn handle_network_scan(Json(body): Json<NetworkScanRequest>) -> Json<NetworkScanResponse> {
-    let devices = discovery::scan_network(&body.base_ip, body.start, body.end);
+    let devices = discovery::scan_network(&body.base_ip, body.start, body.end).await;
     Json(NetworkScanResponse {
         success: true,
         devices,
