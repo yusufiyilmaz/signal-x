@@ -1,110 +1,154 @@
-﻿# Signal-X - Otomatik Ag Guvenlik Denetcisi
+﻿# Signal-X — Otomatik Ag Guvenlik Denetcisi
 
-Rust ile yazilmis, ag guvenlik denetimi yapan bir arac. Web paneli uzerinden
-IP tarama, port analizi, OS tespiti ve guvenlik raporu olusturma islemleri yapilabilir.
+Rust ile yazilmis, web tabanli ag guvenlik denetim araci.
+TCP port tarama, cihaz kesfi, OS tespiti ve guvenlik raporlama ozellikleri sunar.
 
-## Ozellikler
+---
 
-- TCP port tarama (async paralel, tokio)
-- Ag cihaz kesfi (ping sweep)
-- OS tespiti (TTL analizi)
-- Servis tespiti (SSH, HTTP, FTP, MySQL vb.)
-- A-F guvenlik puanlama sistemi
-- Markdown rapor export
-- Web panel (5 tema, tarayicida acilir)
+## Kurulum ve Calistirma
 
-## Kurulum
-
-### Gereksinimler
-
-- Rust 1.70+
-- Cargo
-
-### Calistirma
+**Gereksinimler:** Rust 1.70+, Cargo
 ```bash
+# Projeyi klonla
 git clone https://github.com/yusufiyilmaz/signal-x.git
 cd signal-x
+
+# Calistir
 cargo run
 ```
 
-Tarayicida ac: http://127.0.0.1:3000
+Tarayicide ac: [http://127.0.0.1:3000](http://127.0.0.1:3000)
+
+---
+
+## Ozellikler
+
+- **Port Tarama** — Async paralel TCP tarama, 200ms timeout, servis tespiti
+- **Ag Kesfi** — Ping sweep ile agdaki aktif cihazlari bulma
+- **OS Tespiti** — TTL analizi ile Windows / Linux / Router tahmini
+- **Guvenlik Puani** — Acik portlara gore A-F harf notu
+- **Markdown Rapor** — Tarama sonuclarini export etme
+- **Web Panel** — 5 degistirilebilir tema ile tarayici arayuzu
+
+---
 
 ## Kullanim
 
 ### Port Tarama
-
-Web panelinde:
-1. Hedef IP adresini gir
-2. Port araligini belirle
-3. Tara butonuna bas
+1. Web panelinde **Port Tarama** sekmesini ac
+2. Hedef IP adresini gir → ornek: `192.168.1.1`
+3. Port araligini belirle → ornek: `1` ile `1000`
+4. **Tara** butonuna bas, sonuclar ekrana gelir
 
 ### Ag Kesfi
-
-Web panelinde Ag Kesfi sekmesine gec:
-1. Ag adresini gir (ornek: 192.168.1)
-2. Baslangic ve bitis araligini belirle
-3. Tara butonuna bas
+1. **Ag Kesfi** sekmesini ac
+2. Ag adresini gir → ornek: `192.168.1`
+3. Aralik belirle → ornek: `1` ile `254`
+4. **Tara** butonuna bas, aktif cihazlar listelenir
 
 ### Rapor
+1. Tarama tamamlandiktan sonra **Rapor** sekmesine gec
+2. Markdown veya JSON formatinda export edebilirsin
 
-Tarama sonrasi Rapor sekmesinden Markdown formatinda raporu kopyalayabilirsin.
+---
 
-## Moduller
+## Web Panel Temaları
 
-| Modul | Aciklama |
-|-------|----------|
-| scanner.rs | Async paralel TCP port tarama |
-| discovery.rs | Ping ile ag cihaz kesfi |
-| os_detect.rs | TTL analizi ile OS tespiti |
-| report.rs | Guvenlik puanlama ve rapor uretimi |
-| web.rs | Axum web server ve API endpointler |
+Sag ustteki renkli dairelerle tema degistirilebilir:
 
-## Guvenlik Puanlama
+| Tema | Renk Paleti |
+|------|-------------|
+| Cyberpunk | Mor ve pembe neon |
+| Matrix | Yesil |
+| Tehlike | Kirmizi |
+| Cyber | Mavi |
+| Gold | Altin |
 
-| Puan | Anlam |
-|------|-------|
-| A | Cok guvenli |
-| B | Guvenli |
-| C | Orta |
-| D | Riskli |
-| E | Tehlikeli |
-| F | Cok tehlikeli |
+---
 
-Acik port basina -5 puan, riskli port (21, 23, 445, 3389, 6379) basina -15 puan dusulur.
+## Proje Yapisi
+signal-x/
+├── src/
+│   ├── main.rs        # Giris noktasi, modulleri baglar
+│   ├── scanner.rs     # Async paralel TCP port tarama + 2 unit test
+│   ├── discovery.rs   # Ping sweep ile ag cihaz kesfi
+│   ├── os_detect.rs   # TTL analizi ile OS tespiti
+│   ├── report.rs      # Guvenlik puanlama + markdown rapor + 4 unit test
+│   └── web.rs         # Axum web sunucusu, 3 API endpoint
+├── static/
+│   └── index.html     # 5 temali web panel
+└── Cargo.toml
 
-## Test
+---
+
+## API Endpointleri
+
+| Metod | Endpoint | Aciklama |
+|-------|----------|----------|
+| POST | `/api/scan` | IP + port araligini tarar, OS + puan + rapor dondurur |
+| POST | `/api/network` | IP araligindaki aktif cihazlari dondurur |
+| GET | `/api/health` | Sunucu durumunu kontrol eder |
+
+---
+
+## Guvenlik Puanlama Sistemi
+
+Baslangic puani: **100**
+
+- Her acik port: **-5 puan**
+- Riskli port `21, 23, 445, 3389, 6379`: **-15 puan**
+
+| Not | Puan Araligi | Anlam |
+|-----|-------------|-------|
+| A | 90 – 100 | Cok guvenli |
+| B | 75 – 89 | Guvenli |
+| C | 60 – 74 | Orta duzey risk |
+| D | 45 – 59 | Riskli |
+| E | 30 – 44 | Tehlikeli |
+| F | 0 – 29 | Cok tehlikeli |
+
+---
+
+## Testler
 ```bash
 cargo test
 ```
 
+6 unit test bulunur, hepsi basariyla gecer:
+
+- `test_get_service_name` — servis adi eslesmesi
+- `test_scan_port_closed` — kapali port tarama
+- `test_security_score_a` — bos port listesi A notu almali
+- `test_security_score_f` — cok fazla port F notu almali
+- `test_security_score_riskli_port` — riskli portlar puani dusurmeli
+- `test_generate_markdown` — rapor dogru bilgi icermeli
+
+---
+
 ## Ogrendiklerim
 
-Bu proje boyunca Rust dilini sifirdan ogrendim ve gercek bir guvenlik araci gelistirdim.
+**Async programlama:** Tokio ile `tokio::spawn` kullanarak her porta ayri gorev actim.
+Paralel tarama sayesinde yuzlerce portu ayni anda tarayabildim; sirayla yapilsaydi cok yavas olurdu.
 
-**Async programlama:** Tokio kutuphanesi ile async/await yapisini ogrendim. Her porta ayri
-bir tokio::spawn gorevi acarak paralel tarama yapmayi basardim. Onceden portlari sirayla
-tarasaydim cok yavас olurdu; paralel yapisayla yuzlerce portu ayni anda tarayabiliyorum.
+**TCP baglanti mantigi:** Porta TCP baglantisi acmaya calismak yeterli.
+Baglanti kurulursa port acik, kurulamazsa kapali. 200ms timeout ile hizli ve dogru sonuc aldim.
 
-**TCP baglanti mantigi:** Port taramanin temelini ogrendim. Bir porta TCP baglantisi
-acmaya calismak yeterli; baglanti kurulursa port acik, kurulamazsa kapali demektir.
-200ms timeout koyarak hem hizli hem de dogru sonuc aldim.
+**TTL analizi ile OS tespiti:** Windows TTL=128, Linux TTL=64, routerlar daha dusuk deger gonderir.
+Ping ciktisini parse ederek isletim sistemini tahmin ettim.
 
-**TTL analizi ile OS tespiti:** Ping ciktisindaki TTL degeri isletim sistemine gore
-degistigini kesfettim. Windows 128, Linux 64, routerlar ise daha dusuk TTL ile yanit
-verir. Bu bilgiyi parse ederek OS tahmin ettim.
+**Axum web framework:** REST API kurmak, JSON islemek, statik dosya sunmak icin Axum kullandim.
+Router yapisini ve handler fonksiyonlarini ogrendim.
 
-**Axum web framework:** Rust'ta HTTP sunucusu kurmak icin Axum kullandim. Router
-tanimlamak, JSON islemek ve statik dosya sunmak icin nasil yapilandirildigini ogrendim.
+**Rust modul sistemi:** Her sorumlulugu ayri dosyaya bolduk. Tek dosyada olmamasi
+hem okunurlugu hem de bakimi kolaylastirdi.
 
-**Modul sistemi:** Rust'ta kodun tek dosyada olmamasi gerektigini ogrendim. Her
-sorumluluk ayri bir module bolundu: tarama, kesif, OS tespiti, raporlama ve web.
+**Ownership ve borrowing:** `&str` ile `String` farkini, `Clone` ve `Copy` traitlerini kavradim.
+Baslangicta en zorlayici konu buydu.
 
-**Ownership ve borrowing:** Rust'in en zorlu konusu buydu. Bir degiskeni baska bir
-fonksiyona gecerken kimin sahip oldugu meselesi baslangicta cok kafa karistirdi.
-Zamanla &str ve String farkini, Clone ve Copy traitlerini kavradim.
+**Guvenlik dusuncesi:** 21 (FTP), 23 (Telnet), 445 (SMB), 3389 (RDP) gibi portlarin
+neden riskli sayildigini ogrendim ve puanlama sistemine dahil ettim.
 
-**Guvenlik dusuncesi:** Hangi portlarin riskli oldugunu ogrendim. 21 (FTP), 23 (Telnet),
-445 (SMB), 3389 (RDP) gibi portlar aciksa sistemin saldirilara acik oldugunu anliyorum.
+---
 
 ## Lisans
 
