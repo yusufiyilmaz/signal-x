@@ -48,3 +48,44 @@ pub fn generate_markdown(
 
     md
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::scanner::PortResult;
+
+    fn make_port(port: u16) -> PortResult {
+        PortResult {
+            port,
+            open: true,
+            service: "Test".to_string(),
+        }
+    }
+
+    #[test]
+    fn test_security_score_a() {
+        let ports = vec![];
+        assert_eq!(security_score(&ports), "A");
+    }
+
+    #[test]
+    fn test_security_score_f() {
+        let ports: Vec<PortResult> = (0..20).map(|i| make_port(i)).collect();
+        assert_eq!(security_score(&ports), "F");
+    }
+
+    #[test]
+    fn test_security_score_riskli_port() {
+        let ports = vec![make_port(21), make_port(23)];
+        let score = security_score(&ports);
+        assert!(score == "C" || score == "D" || score == "E" || score == "F");
+    }
+
+    #[test]
+    fn test_generate_markdown() {
+        let ports = vec![make_port(80)];
+        let md = generate_markdown("192.168.1.1", &ports, "Windows", "A");
+        assert!(md.contains("192.168.1.1"));
+        assert!(md.contains("Windows"));
+        assert!(md.contains("80"));
+    }
+}

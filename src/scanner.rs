@@ -67,3 +67,24 @@ pub async fn scan_range(ip: IpAddr, start: u16, end: u16) -> Vec<PortResult> {
 
     results
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_service_name() {
+        assert_eq!(get_service_name(80), "HTTP");
+        assert_eq!(get_service_name(443), "HTTPS");
+        assert_eq!(get_service_name(22), "SSH");
+        assert_eq!(get_service_name(21), "FTP");
+        assert_eq!(get_service_name(9999), "Unknown");
+    }
+
+    #[tokio::test]
+    async fn test_scan_port_closed() {
+        use std::net::IpAddr;
+        let ip: IpAddr = "127.0.0.1".parse().unwrap();
+        let result = scan_port(ip, 19999).await;
+        assert_eq!(result.open, false);
+    }
+}
