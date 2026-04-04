@@ -1,5 +1,5 @@
-use std::net::{IpAddr, SocketAddr};
 use serde::Serialize;
+use std::net::{IpAddr, SocketAddr};
 use tokio::net::TcpStream;
 use tokio::time::{timeout, Duration};
 
@@ -34,10 +34,9 @@ pub fn get_service_name(port: u16) -> String {
 
 pub async fn scan_port(ip: IpAddr, port: u16) -> PortResult {
     let addr = SocketAddr::new(ip, port);
-    let open = timeout(
-        Duration::from_millis(200),
-        TcpStream::connect(addr)
-    ).await.is_ok();
+    let open = timeout(Duration::from_millis(200), TcpStream::connect(addr))
+        .await
+        .is_ok();
 
     let service = if open {
         get_service_name(port)
@@ -45,7 +44,11 @@ pub async fn scan_port(ip: IpAddr, port: u16) -> PortResult {
         String::new()
     };
 
-    PortResult { port, open, service }
+    PortResult {
+        port,
+        open,
+        service,
+    }
 }
 
 pub async fn scan_range(ip: IpAddr, start: u16, end: u16) -> Vec<PortResult> {

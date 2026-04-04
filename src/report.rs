@@ -30,7 +30,7 @@ pub fn generate_markdown(
 ) -> String {
     let mut md = String::new();
 
-    md.push_str(&format!("# Signal-X Güvenlik Raporu\n\n"));
+    md.push_str("# Signal-X Güvenlik Raporu\n\n");
     md.push_str(&format!("**Hedef:** {}\n", target));
     md.push_str(&format!("**İşletim Sistemi:** {}\n", os_guess));
     md.push_str(&format!("**Güvenlik Puanı:** {}\n\n", score));

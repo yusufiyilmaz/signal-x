@@ -1,7 +1,7 @@
-mod scanner;
 mod discovery;
 mod os_detect;
 mod report;
+mod scanner;
 mod web;
 
 #[tokio::main]

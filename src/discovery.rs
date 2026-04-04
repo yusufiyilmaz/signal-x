@@ -1,6 +1,6 @@
+use serde::Serialize;
 use std::net::IpAddr;
 use tokio::process::Command;
-use serde::Serialize;
 
 #[derive(Serialize, Clone)]
 pub struct Device {

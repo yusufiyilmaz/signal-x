@@ -3,16 +3,16 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use std::net::SocketAddr;
-use tower_http::services::ServeDir;
+use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use std::net::IpAddr;
-use colored::Colorize;
+use std::net::SocketAddr;
+use tower_http::services::ServeDir;
 
-use crate::scanner;
 use crate::discovery;
 use crate::os_detect;
 use crate::report;
+use crate::scanner;
 
 #[derive(Deserialize)]
 pub struct ScanRequest {
@@ -62,7 +62,8 @@ async fn handle_scan(Json(body): Json<ScanRequest>) -> Json<ScanResponse> {
     let open_ports = scanner::scan_range(ip, body.start_port, body.end_port).await;
     let os_guess = os_detect::guess_os(ip).await;
     let security_score = report::security_score(&open_ports);
-    let report_md = report::generate_markdown(&body.target, &open_ports, &os_guess, &security_score);
+    let report_md =
+        report::generate_markdown(&body.target, &open_ports, &os_guess, &security_score);
 
     Json(ScanResponse {
         success: true,
