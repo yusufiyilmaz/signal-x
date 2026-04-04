@@ -1,7 +1,11 @@
-[package]
+﻿[package]
 name = "signal-x"
 version = "1.0.0"
 edition = "2021"
+authors = ["Yusuf Yilmaz"]
+description = "Ag guvenlik denetcisi - TCP port tarama, cihaz kesfi, OS tespiti ve web paneli"
+keywords = ["network", "security", "scanner", "pentest", "cybersecurity"]
+license = "MIT"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
