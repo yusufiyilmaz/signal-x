@@ -59,7 +59,7 @@ async fn handle_scan(Json(body): Json<ScanRequest>) -> Json<ScanResponse> {
         }
     };
 
-    let open_ports = scanner::scan_range(ip, body.start_port, body.end_port, 500);
+    let open_ports = scanner::scan_range(ip, body.start_port, body.end_port).await;
     let os_guess = os_detect::guess_os(ip).await;
     let security_score = report::security_score(&open_ports);
     let report_md = report::generate_markdown(&body.target, &open_ports, &os_guess, &security_score);

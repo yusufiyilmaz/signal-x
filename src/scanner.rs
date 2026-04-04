@@ -1,6 +1,7 @@
-use std::net::{IpAddr, SocketAddr, TcpStream};
-use std::time::Duration;
+use std::net::{IpAddr, SocketAddr};
 use serde::Serialize;
+use tokio::net::TcpStream;
+use tokio::time::{timeout, Duration};
 
 #[derive(Serialize, Clone)]
 pub struct PortResult {
@@ -31,10 +32,13 @@ pub fn get_service_name(port: u16) -> String {
     }
 }
 
-pub fn scan_port(ip: IpAddr, port: u16, timeout_ms: u64) -> PortResult {
+pub async fn scan_port(ip: IpAddr, port: u16) -> PortResult {
     let addr = SocketAddr::new(ip, port);
-    let timeout = Duration::from_millis(timeout_ms);
-    let open = TcpStream::connect_timeout(&addr, timeout).is_ok();
+    let open = timeout(
+        Duration::from_millis(200),
+        TcpStream::connect(addr)
+    ).await.is_ok();
+
     let service = if open {
         get_service_name(port)
     } else {
@@ -44,9 +48,22 @@ pub fn scan_port(ip: IpAddr, port: u16, timeout_ms: u64) -> PortResult {
     PortResult { port, open, service }
 }
 
-pub fn scan_range(ip: IpAddr, start: u16, end: u16, timeout_ms: u64) -> Vec<PortResult> {
-    (start..=end)
-        .map(|port| scan_port(ip, port, timeout_ms))
-        .filter(|r| r.open)
-        .collect()
+pub async fn scan_range(ip: IpAddr, start: u16, end: u16) -> Vec<PortResult> {
+    let mut handles = vec![];
+
+    for port in start..=end {
+        let handle = tokio::spawn(scan_port(ip, port));
+        handles.push(handle);
+    }
+
+    let mut results = vec![];
+    for handle in handles {
+        if let Ok(result) = handle.await {
+            if result.open {
+                results.push(result);
+            }
+        }
+    }
+
+    results
 }
