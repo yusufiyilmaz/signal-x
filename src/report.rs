@@ -1,17 +1,33 @@
+﻿//! # report
+//! Guvenlik puani hesaplama ve Markdown rapor uretme modulu.
+//! Acik port sayisi ve riskli portlara gore A-F arasi not verir.
+
 use crate::scanner::PortResult;
 
+/// Acik portlara gore guvenlik puani hesaplar ve harf notu dondurur.
+///
+/// # Puan Hesaplama
+/// - Baslangic puani: 100
+/// - Her acik port: -5 puan
+/// - Riskli port (21, 23, 445, 3389, 6379): ek -15 puan
+///
+/// # Harf Notlari
+/// - A: 90-100, B: 75-89, C: 60-74, D: 45-59, E: 30-44, F: 0-29
+///
+/// # Parametreler
+/// - `open_ports`: Acik portlarin listesi
+///
+/// # Donus Degeri
+/// "A", "B", "C", "D", "E" veya "F" harf notu
 pub fn security_score(open_ports: &[PortResult]) -> String {
     let riskli: Vec<u16> = vec![21, 23, 445, 3389, 6379];
     let mut puan: i32 = 100;
-
     puan -= (open_ports.len() as i32) * 5;
-
     for port in open_ports {
         if riskli.contains(&port.port) {
             puan -= 15;
         }
     }
-
     match puan {
         90..=100 => "A".to_string(),
         75..=89 => "B".to_string(),
@@ -22,6 +38,16 @@ pub fn security_score(open_ports: &[PortResult]) -> String {
     }
 }
 
+/// Tarama sonuclarindan Markdown formatinda guvenlik raporu uretir.
+///
+/// # Parametreler
+/// - `target`: Hedef IP adresi
+/// - `open_ports`: Acik portlarin listesi
+/// - `os_guess`: Tahmin edilen isletim sistemi
+/// - `score`: Hesaplanan guvenlik notu
+///
+/// # Donus Degeri
+/// Markdown formatinda rapor metni
 pub fn generate_markdown(
     target: &str,
     open_ports: &[PortResult],
@@ -29,25 +55,22 @@ pub fn generate_markdown(
     score: &str,
 ) -> String {
     let mut md = String::new();
-
-    md.push_str("# Signal-X Güvenlik Raporu\n\n");
+    md.push_str("# Signal-X Guvenlik Raporu\n\n");
     md.push_str(&format!("**Hedef:** {}\n", target));
-    md.push_str(&format!("**İşletim Sistemi:** {}\n", os_guess));
-    md.push_str(&format!("**Güvenlik Puanı:** {}\n\n", score));
-    md.push_str("## Açık Portlar\n\n");
+    md.push_str(&format!("**Isletim Sistemi:** {}\n", os_guess));
+    md.push_str(&format!("**Guvenlik Puani:** {}\n\n", score));
+    md.push_str("## Acik Portlar\n\n");
     md.push_str("| Port | Servis |\n");
     md.push_str("|------|--------|\n");
-
     for port in open_ports {
         md.push_str(&format!("| {} | {} |\n", port.port, port.service));
     }
-
     if open_ports.is_empty() {
-        md.push_str("Açık port bulunamadı.\n");
+        md.push_str("Acik port bulunamadi.\n");
     }
-
     md
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
