@@ -5,14 +5,6 @@
 use crate::scanner::PortResult;
 
 /// Acik portlara gore guvenlik puani hesaplar ve harf notu dondurur.
-///
-/// # Puan Hesaplama
-/// - Baslangic puani: 100
-/// - Her acik port: -5 puan
-/// - Riskli port (21, 23, 445, 3389, 6379): ek -15 puan
-///
-/// # Harf Notlari
-/// - A: 90-100, B: 75-89, C: 60-74, D: 45-59, E: 30-44, F: 0-29
 pub fn security_score(open_ports: &[PortResult]) -> String {
     let riskli: Vec<u16> = vec![21, 23, 445, 3389, 6379];
     let mut puan: i32 = 100;
@@ -45,17 +37,22 @@ pub fn generate_markdown(
     md.push_str(&format!("**Isletim Sistemi:** {}\n", os_guess));
     md.push_str(&format!("**Guvenlik Puani:** {}\n\n", score));
     md.push_str("## Acik Portlar\n\n");
-    md.push_str("| Port | Servis | Banner |\n");
-    md.push_str("|------|--------|--------|\n");
+    md.push_str("| Port | Servis | Versiyon | Banner |\n");
+    md.push_str("|------|--------|----------|--------|\n");
     for port in open_ports {
-        let banner = if port.banner.is_empty() {
+        let ver = if port.version.is_empty() {
             "—".to_string()
         } else {
-            port.banner.clone()
+            port.version.clone()
+        };
+        let ban = if port.banner.is_empty() {
+            "—".to_string()
+        } else {
+            port.banner.chars().take(40).collect()
         };
         md.push_str(&format!(
-            "| {} | {} | {} |\n",
-            port.port, port.service, banner
+            "| {} | {} | {} | {} |\n",
+            port.port, port.service, ver, ban
         ));
     }
     if open_ports.is_empty() {
@@ -75,6 +72,7 @@ mod tests {
             open: true,
             service: "Test".to_string(),
             banner: String::new(),
+            version: String::new(),
         }
     }
 

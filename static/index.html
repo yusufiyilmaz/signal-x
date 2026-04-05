@@ -294,6 +294,7 @@
         <div class="modal-detail-row"><span class="modal-detail-label" id="mlRisk">RISK SEVIYESI</span><span class="modal-detail-value" id="modalRisk">—</span></div>
         <div class="modal-detail-row"><span class="modal-detail-label" id="mlProto">PROTOKOL</span><span class="modal-detail-value">TCP</span></div>
         <div class="modal-detail-row"><span class="modal-detail-label" id="mlStatus">DURUM</span><span class="modal-detail-value" style="color:#00f0ff" id="modalStatus">ACIK</span></div>
+        <div class="modal-detail-row"><span class="modal-detail-label">BANNER</span><span class="modal-detail-value" id="modalBanner" style="font-size:11px;color:var(--neon3);">—</span></div>
         <div class="modal-desc" id="modalDesc">—</div>
         <div class="modal-rec" id="modalRec" style="display:none">
             <div class="modal-rec-title" id="modalRecTitle">// GUVENLIK ONERILERI</div>
@@ -423,7 +424,7 @@
                 <div class="risk-meter">
                     <div class="risk-meter-label" id="riskMeterTitle">RISK GOSTERGESI</div>
                     <div class="risk-bar-bg"><div class="risk-bar-fill" id="riskBarFill" style="width:0%"></div></div>
-                    <div class="risk-score-label" id="riskLabel">—</div>
+                    <div class="risk-score-label" id="riskLabel">—</div><span id="riskPct2" style="color:var(--dim);font-size:10px;margin-left:8px;">%0</span>
                 </div>
 
                 <div class="view-toggle">
@@ -453,6 +454,7 @@
                             <th id="thService" onclick="sortTable('service')">SERVIS</th>
                             <th id="thRisk" onclick="sortTable('risk')">RISK</th>
                             <th id="thStatus">DURUM</th>
+                            <th id="thBanner">BANNER</th>
                         </tr></thead><tbody id="portTable"></tbody></table>
                     </div>
                 </div>
@@ -776,7 +778,8 @@ function renderPortTable(ports){
             <td><strong style="color:var(--neon);font-size:15px">${p.port}</strong></td>
             <td>${p.service||'—'}</td>
             <td>${getRiskBadge(p.port)}</td>
-            <td><span class="badge badge-open">${t('badgeOpen')}</span></td>
+           <td><span class="badge badge-open">${t('badgeOpen')}</span></td>
+            <td style="color:var(--dim);font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.banner||'—'}</td>
         </tr>`;
     });
 }
@@ -791,6 +794,8 @@ function openPortModal(port,service){
     document.getElementById('modalRisk').style.color=riskColor;
     document.getElementById('modalStatus').textContent=t('modalStatus');
     const info=PORT_INFO[port];
+    const bannerInfo = document.getElementById('modalBanner');
+if(bannerInfo) bannerInfo.textContent = lastScanData?.open_ports?.find(op=>op.port===port)?.banner || '—';
     document.getElementById('modalDesc').textContent=info?info.desc:`Port ${port} - Bilinen bir servis tanimlamamiz bulunmuyor. Manuel inceleme onerilir.`;
     // Security recommendations
     if(info&&info.rec){
@@ -1041,7 +1046,7 @@ function showScanResults(data,startPort,endPort){
     const totalPorts=endPort-startPort+1;
     const riskPct=Math.min(100,Math.round(riskCount*15+data.open_ports.length*5));
     document.getElementById('scanResults').style.display='block';
-    document.getElementById('scanMeta').innerHTML=`<div class="scan-meta-item">${t('metaTarget')}: <span>${data.target}</span></div><div class="scan-meta-item">${t('metaTime')}: <span>${elapsed}s</span></div><div class="scan-meta-item">${t('metaScanned')}: <span>${totalPorts}</span> ${t('metaPorts')}</div>`;
+   document.getElementById('scanMeta').innerHTML=`<div class="scan-meta-item">${t('metaTarget')}: <span>${data.target}</span></div><div class="scan-meta-item">${t('metaTime')}: <span>${elapsed}s</span></div><div class="scan-meta-item">${t('metaScanned')}: <span>${totalPorts} ${t('metaPorts')}</span></div>`;
     document.getElementById('statOS').textContent=data.os_guess;
     document.getElementById('statOpen').textContent=data.open_ports.length;
     document.getElementById('statRisk').textContent=riskCount;
@@ -1050,6 +1055,7 @@ function showScanResults(data,startPort,endPort){
     document.getElementById('statScore').innerHTML=`<span class="score-badge score-${score}">${score}</span>`;
     const riskColors={A:'#00ff41',B:'#00ff41',C:'#ffc800',D:'#ff6400',E:'#ff3060',F:'#ff3060'};
     document.getElementById('riskBarFill').style.width=riskPct+'%';
+    document.getElementById('riskPct2') && (document.getElementById('riskPct2').textContent = '%'+riskPct);
     document.getElementById('riskLabel').style.color=riskColors[score]||'#ff3060';
     document.getElementById('riskLabel').textContent=score;
     document.getElementById('sideOpenVal').textContent=data.open_ports.length;
