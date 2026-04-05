@@ -1,7 +1,7 @@
 //! # scanner
 //! Async paralel TCP port tarama modulu.
 //! Her port icin ayri tokio gorevi olusturur, timeout ile baglanti dener.
-//! Banner grabbing ve servis imzasi eslestirme yapar.
+//! Banner grabbing, servis imzasi eslestirme ve filtreli port tespiti yapar.
 
 use serde::Serialize;
 use std::net::{IpAddr, SocketAddr};
@@ -9,13 +9,36 @@ use tokio::io::AsyncReadExt;
 use tokio::net::TcpStream;
 use tokio::time::{timeout, Duration};
 
+/// Port durumunu temsil eder.
+#[derive(Serialize, Clone, PartialEq, Debug)]
+pub enum PortStatus {
+    /// Port acik - baglanti kuruldu
+    Open,
+    /// Port kapali - baglanti reddedildi
+    Closed,
+    /// Port filtreli - baglanti zaman asimi (firewall)
+    Filtered,
+}
+
+impl std::fmt::Display for PortStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            PortStatus::Open => write!(f, "open"),
+            PortStatus::Closed => write!(f, "closed"),
+            PortStatus::Filtered => write!(f, "filtered"),
+        }
+    }
+}
+
 /// Tek bir portun tarama sonucunu temsil eder.
 #[derive(Serialize, Clone)]
 pub struct PortResult {
     /// Port numarasi
     pub port: u16,
-    /// Portun acik olup olmadigi
+    /// Portun acik olup olmadigi (geri uyumluluk icin)
     pub open: bool,
+    /// Port durumu: Open, Closed, Filtered
+    pub status: String,
     /// Tespit edilen servis adi (HTTP, SSH, FTP vb.)
     pub service: String,
     /// Banner grabbing ile alinan ham banner
@@ -48,27 +71,17 @@ pub fn get_service_name(port: u16) -> String {
 }
 
 /// Banner metninden servis versiyonunu cikartir.
-///
-/// # Ornekler
-/// - "SSH-2.0-OpenSSH_8.4" -> "OpenSSH 8.4"
-/// - "220 ProFTPD 1.3.5" -> "ProFTPD 1.3.5"
-/// - "Server: Apache/2.4.41" -> "Apache 2.4.41"
-/// - "+OK Dovecot ready" -> "Dovecot"
 pub fn parse_version(banner: &str, port: u16) -> String {
     if banner.is_empty() {
         return String::new();
     }
     let b = banner.trim();
-
-    // SSH: SSH-2.0-OpenSSH_8.4p1
     if b.starts_with("SSH-") {
         let parts: Vec<&str> = b.splitn(3, '-').collect();
         if parts.len() >= 3 {
             return parts[2].replace('_', " ").trim().to_string();
         }
     }
-
-    // FTP: 220 ProFTPD 1.3.5 Server
     if port == 21 && b.starts_with("220") {
         let rest = b.trim_start_matches("220").trim();
         let words: Vec<&str> = rest.split_whitespace().take(2).collect();
@@ -76,8 +89,6 @@ pub fn parse_version(banner: &str, port: u16) -> String {
             return words.join(" ");
         }
     }
-
-    // SMTP: 220 mail.example.com ESMTP Postfix
     if port == 25 && b.starts_with("220") {
         if b.contains("Postfix") {
             return "Postfix".to_string();
@@ -89,8 +100,6 @@ pub fn parse_version(banner: &str, port: u16) -> String {
             return "Exim".to_string();
         }
     }
-
-    // HTTP: Server: Apache/2.4.41 veya Server: nginx/1.18.0
     if b.contains("Server:") {
         if let Some(pos) = b.find("Server:") {
             let rest = b[pos + 7..].trim();
@@ -104,55 +113,31 @@ pub fn parse_version(banner: &str, port: u16) -> String {
             }
         }
     }
-
-    // HTTP response ilk satirinda versiyon
     if b.starts_with("HTTP/") {
-        // Apache, nginx icin header'a bak
         if b.contains("Apache") {
             if let Some(pos) = b.find("Apache/") {
-                let ver: String = b[pos..]
+                return b[pos..]
                     .split_whitespace()
                     .next()
                     .unwrap_or("Apache")
                     .replace('/', " ");
-                return ver;
             }
             return "Apache".to_string();
         }
         if b.contains("nginx") {
             if let Some(pos) = b.find("nginx/") {
-                let ver: String = b[pos..]
+                return b[pos..]
                     .split_whitespace()
                     .next()
                     .unwrap_or("nginx")
                     .replace('/', " ");
-                return ver;
             }
             return "nginx".to_string();
         }
     }
-
-    // MySQL: ilk byte'larda versiyon string
-    if port == 3306 && b.len() > 5 {
-        // MySQL banner'i binary, ASCII kismi cikart
-        let ascii: String = b
-            .chars()
-            .filter(|c| c.is_ascii_alphanumeric() || *c == '.')
-            .take(20)
-            .collect();
-        if ascii.contains('.') {
-            return format!("MySQL {}", ascii.trim_matches(|c: char| !c.is_numeric()));
-        }
+    if port == 6379 && (b.starts_with('+') || b.starts_with('-')) {
+        return "Redis".to_string();
     }
-
-    // Redis: +PONG veya -ERR
-    if port == 6379 {
-        if b.starts_with("+") || b.starts_with("-") {
-            return "Redis".to_string();
-        }
-    }
-
-    // POP3: +OK Dovecot
     if port == 110 && b.starts_with("+OK") {
         if b.contains("Dovecot") {
             return "Dovecot".to_string();
@@ -161,14 +146,9 @@ pub fn parse_version(banner: &str, port: u16) -> String {
             return "Courier".to_string();
         }
     }
-
-    // IMAP: * OK Dovecot
-    if port == 143 && b.starts_with("* OK") {
-        if b.contains("Dovecot") {
-            return "Dovecot".to_string();
-        }
+    if port == 143 && b.starts_with("* OK") && b.contains("Dovecot") {
+        return "Dovecot".to_string();
     }
-
     String::new()
 }
 
@@ -176,26 +156,29 @@ pub fn parse_version(banner: &str, port: u16) -> String {
 async fn grab_banner(mut stream: TcpStream) -> String {
     let mut buf = vec![0u8; 256];
     match timeout(Duration::from_millis(300), stream.read(&mut buf)).await {
-        Ok(Ok(n)) if n > 0 => {
-            let raw = &buf[..n];
-            let text = String::from_utf8_lossy(raw)
-                .trim()
-                .lines()
-                .next()
-                .unwrap_or("")
-                .chars()
-                .filter(|c| c.is_ascii() && !c.is_ascii_control())
-                .take(80)
-                .collect::<String>()
-                .trim()
-                .to_string();
-            text
-        }
+        Ok(Ok(n)) if n > 0 => String::from_utf8_lossy(&buf[..n])
+            .trim()
+            .lines()
+            .next()
+            .unwrap_or("")
+            .chars()
+            .filter(|c| c.is_ascii() && !c.is_ascii_control())
+            .take(80)
+            .collect::<String>()
+            .trim()
+            .to_string(),
         _ => String::new(),
     }
 }
 
-/// Tek bir porta async TCP baglantisi dener, aciksa banner okur ve versiyon cikartir.
+/// Tek bir porta async TCP baglantisi dener.
+/// Aciksa banner okur ve versiyon cikartir.
+/// Kapali veya filtreli durumunu tespit eder.
+///
+/// # Port Durumlari
+/// - Open: Baglanti kuruldu
+/// - Closed: Baglanti reddedildi (Connection refused)
+/// - Filtered: Zaman asimi - firewall engelliyor olabilir
 pub async fn scan_port(ip: IpAddr, port: u16, timeout_ms: u64) -> PortResult {
     let addr = SocketAddr::new(ip, port);
     let result = timeout(Duration::from_millis(timeout_ms), TcpStream::connect(addr)).await;
@@ -208,22 +191,44 @@ pub async fn scan_port(ip: IpAddr, port: u16, timeout_ms: u64) -> PortResult {
             PortResult {
                 port,
                 open: true,
+                status: PortStatus::Open.to_string(),
                 service,
                 banner,
                 version,
             }
         }
-        _ => PortResult {
-            port,
-            open: false,
-            service: String::new(),
-            banner: String::new(),
-            version: String::new(),
-        },
+        Ok(Err(e)) => {
+            // Connection refused = kapali port
+            let is_refused = e.kind() == std::io::ErrorKind::ConnectionRefused;
+            PortResult {
+                port,
+                open: false,
+                status: if is_refused {
+                    PortStatus::Closed.to_string()
+                } else {
+                    PortStatus::Filtered.to_string()
+                },
+                service: String::new(),
+                banner: String::new(),
+                version: String::new(),
+            }
+        }
+        Err(_) => {
+            // Timeout = filtreli port (firewall)
+            PortResult {
+                port,
+                open: false,
+                status: PortStatus::Filtered.to_string(),
+                service: String::new(),
+                banner: String::new(),
+                version: String::new(),
+            }
+        }
     }
 }
 
-/// Belirtilen port araligini paralel olarak tarar, sadece acik portlari dondurur.
+/// Belirtilen port araligini paralel olarak tarar.
+/// Sadece acik portlari dondurur.
 pub async fn scan_range(ip: IpAddr, start: u16, end: u16, timeout_ms: u64) -> Vec<PortResult> {
     let mut handles = vec![];
     for port in start..=end {
@@ -236,6 +241,22 @@ pub async fn scan_range(ip: IpAddr, start: u16, end: u16, timeout_ms: u64) -> Ve
             if result.open {
                 results.push(result);
             }
+        }
+    }
+    results
+}
+
+/// Belirtilen port araligini tarar, tum durumlari dondurur (acik+kapali+filtreli).
+pub async fn scan_range_all(ip: IpAddr, start: u16, end: u16, timeout_ms: u64) -> Vec<PortResult> {
+    let mut handles = vec![];
+    for port in start..=end {
+        let handle = tokio::spawn(scan_port(ip, port, timeout_ms));
+        handles.push(handle);
+    }
+    let mut results = vec![];
+    for handle in handles {
+        if let Ok(result) = handle.await {
+            results.push(result);
         }
     }
     results
@@ -269,6 +290,13 @@ mod tests {
         assert_eq!(parse_version("+PONG", 6379), "Redis");
     }
 
+    #[test]
+    fn test_port_status_display() {
+        assert_eq!(PortStatus::Open.to_string(), "open");
+        assert_eq!(PortStatus::Closed.to_string(), "closed");
+        assert_eq!(PortStatus::Filtered.to_string(), "filtered");
+    }
+
     #[tokio::test]
     async fn test_scan_port_closed() {
         let ip: IpAddr = "127.0.0.1".parse().unwrap();
@@ -281,5 +309,10 @@ mod tests {
         let ip: IpAddr = "127.0.0.1".parse().unwrap();
         let result = scan_port(ip, 19998, 200).await;
         assert_eq!(result.banner, "");
+    }
+
+    #[test]
+    fn test_port_status_filtered_on_timeout() {
+        assert_eq!(PortStatus::Filtered.to_string(), "filtered");
     }
 }

@@ -37,8 +37,8 @@ pub fn generate_markdown(
     md.push_str(&format!("**Isletim Sistemi:** {}\n", os_guess));
     md.push_str(&format!("**Guvenlik Puani:** {}\n\n", score));
     md.push_str("## Acik Portlar\n\n");
-    md.push_str("| Port | Servis | Versiyon | Banner |\n");
-    md.push_str("|------|--------|----------|--------|\n");
+    md.push_str("| Port | Servis | Versiyon | Durum | Banner |\n");
+    md.push_str("|------|--------|----------|-------|--------|\n");
     for port in open_ports {
         let ver = if port.version.is_empty() {
             "—".to_string()
@@ -51,8 +51,8 @@ pub fn generate_markdown(
             port.banner.chars().take(40).collect()
         };
         md.push_str(&format!(
-            "| {} | {} | {} | {} |\n",
-            port.port, port.service, ver, ban
+            "| {} | {} | {} | {} | {} |\n",
+            port.port, port.service, ver, port.status, ban
         ));
     }
     if open_ports.is_empty() {
@@ -70,6 +70,7 @@ mod tests {
         PortResult {
             port,
             open: true,
+            status: "open".to_string(),
             service: "Test".to_string(),
             banner: String::new(),
             version: String::new(),
