@@ -33,6 +33,11 @@
         @keyframes borderGlow{0%,100%{box-shadow:0 0 5px var(--neon)}50%{box-shadow:0 0 20px var(--neon),0 0 40px var(--neon2)}}
         @keyframes modalIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
         @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes radarSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        @keyframes radarPing{0%{opacity:1;transform:scale(0.5)}100%{opacity:0;transform:scale(2.5)}}
+        @keyframes nodeAppear{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+        @keyframes drawLine{from{stroke-dashoffset:200}to{stroke-dashoffset:0}}
+        @keyframes barGrow{from{height:0;opacity:0}to{opacity:1}}
 
         /* HEADER */
         .header{background:var(--bg2);border-bottom:2px solid var(--neon);padding:10px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 0 40px rgba(0,0,0,0.5);}
@@ -143,6 +148,8 @@
         .btn-secondary:hover{background:rgba(255,255,255,0.04);}
         .btn-cyan{background:transparent;color:var(--neon3);border:1px solid var(--neon3);}
         .btn-cyan:hover{background:rgba(255,255,255,0.04);}
+        .btn-green{background:transparent;color:#00ff41;border:1px solid #00ff41;}
+        .btn-green:hover{background:rgba(0,255,65,0.05);}
         .btn-sm{padding:7px 14px;font-size:11px;}
         .btn-ghost{background:transparent;color:var(--dim);border:1px solid var(--border);font-size:11px;padding:6px 12px;}
         .btn-ghost:hover{border-color:var(--neon);color:var(--neon);}
@@ -151,10 +158,13 @@
         .progress-wrap{margin-top:18px;display:none;}
         .progress-header{display:flex;justify-content:space-between;margin-bottom:8px;}
         .progress-label{color:var(--dim);font-size:11px;letter-spacing:1px;}
-        .progress-timer{color:var(--neon);font-size:11px;font-weight:bold;}
-        .progress-bar{background:var(--bg3);border-radius:4px;height:6px;overflow:hidden;border:1px solid var(--border);}
-        .progress-fill{height:100%;background:linear-gradient(90deg,var(--neon),var(--neon2),var(--neon3),var(--neon));background-size:300% 100%;border-radius:4px;animation:progressAnim 2s linear infinite;}
+        .progress-pct{color:var(--neon);font-size:13px;font-weight:bold;letter-spacing:2px;}
+        .progress-timer{color:var(--dim);font-size:11px;}
+        .progress-bar-outer{background:var(--bg3);border-radius:6px;height:10px;overflow:hidden;border:1px solid var(--border);position:relative;}
+        .progress-fill-real{height:100%;background:linear-gradient(90deg,var(--neon),var(--neon2),var(--neon3));border-radius:6px;transition:width 0.3s ease;position:relative;}
+        .progress-fill-real::after{content:'';position:absolute;right:0;top:0;bottom:0;width:6px;background:white;border-radius:3px;box-shadow:0 0 10px white;opacity:0.8;}
         .progress-sub{color:var(--dim);font-size:10px;margin-top:6px;letter-spacing:1px;}
+        .progress-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
 
         /* STATS GRID */
         .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px;}
@@ -212,6 +222,45 @@
         .t-line{animation:fadeIn 0.2s ease;}
         .t-cursor{display:inline-block;animation:blink 1s infinite;color:#00ff41;}
 
+        /* TERMINAL MODE */
+        .terminal-mode-full{background:#000;border:1px solid var(--neon);border-radius:10px;padding:0;font-size:12px;line-height:1.9;max-height:500px;overflow-y:auto;display:none;}
+        .terminal-mode-full.active{display:block;}
+        .tmf-header{background:#111;border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:8px;}
+        .tmf-body{padding:16px 18px;}
+        .tm-line{color:#00ff41;animation:fadeIn 0.15s ease;}
+        .tm-line.info{color:#00f0ff;}
+        .tm-line.warn{color:#ffc800;}
+        .tm-line.risk{color:#ff3060;}
+        .tm-line.sys{color:#bf5fff;}
+        .tm-cursor{display:inline-block;animation:blink 1s infinite;color:#00ff41;}
+
+        /* PORT CHART */
+        .chart-wrap{display:flex;gap:20px;align-items:flex-end;padding:16px 0;min-height:140px;overflow-x:auto;}
+        .chart-bar-group{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:44px;}
+        .chart-bar-bg{width:34px;background:var(--bg3);border-radius:4px 4px 0 0;height:100px;display:flex;align-items:flex-end;overflow:hidden;border:1px solid var(--border);}
+        .chart-bar-fill{width:100%;border-radius:4px 4px 0 0;animation:barGrow 0.6s ease forwards;transition:height 0.5s ease;}
+        .chart-bar-fill.open{background:linear-gradient(180deg,var(--neon),var(--neon2));}
+        .chart-bar-fill.risk{background:linear-gradient(180deg,#ff3060,#ff6400);}
+        .chart-bar-fill.safe{background:linear-gradient(180deg,#00ff41,#00cc33);}
+        .chart-label{color:var(--dim);font-size:9px;letter-spacing:1px;text-align:center;}
+        .chart-val{color:var(--neon);font-size:11px;font-weight:bold;}
+        .chart-legend{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;}
+        .chart-legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--dim);}
+        .chart-legend-dot{width:10px;height:10px;border-radius:2px;}
+
+        /* NETWORK MAP */
+        .net-map-wrap{position:relative;background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px;}
+        .net-map-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+        .net-map-title{color:var(--neon);font-size:10px;letter-spacing:2px;}
+        #netMapSvg{width:100%;display:block;}
+        .radar-container{position:relative;display:flex;align-items:center;justify-content:center;padding:20px;}
+        .radar-ring{animation:radarPing 2s ease-out infinite;}
+        .device-node{animation:nodeAppear 0.5s ease forwards;cursor:pointer;}
+        .device-node:hover circle{filter:brightness(1.5);}
+        .net-map-legend{padding:10px 18px;border-top:1px solid var(--border);display:flex;gap:16px;flex-wrap:wrap;}
+        .nml-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--dim);}
+        .nml-dot{width:10px;height:10px;border-radius:50%;}
+
         /* HISTORY */
         .history-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.2s;animation:slideDown 0.3s ease;}
         .history-item:hover{border-color:var(--neon);background:var(--bg);}
@@ -239,6 +288,11 @@
         /* REPORT */
         pre{background:var(--bg);border:1px solid var(--border);padding:20px;border-radius:10px;overflow-x:auto;font-size:12px;line-height:1.9;color:var(--text);}
         .report-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+
+        /* TOGGLE TABS */
+        .view-toggle{display:flex;gap:6px;margin-bottom:14px;}
+        .vtog{background:var(--bg3);border:1px solid var(--border);color:var(--dim);padding:6px 14px;border-radius:6px;cursor:pointer;font-family:monospace;font-size:10px;letter-spacing:1px;transition:all 0.2s;}
+        .vtog.active{background:var(--bg);border-color:var(--neon);color:var(--neon);}
 
         ::-webkit-scrollbar{width:4px;height:4px;}
         ::-webkit-scrollbar-track{background:var(--bg);}
@@ -364,7 +418,7 @@
                 <div class="welcome-tips">
                     <div class="welcome-tips-title" id="tipsTitle">// KULLANIM IPUCLARI</div>
                     <div class="tip-item"><span class="tip-icon">▸</span><span id="tip1">Hizli erisim butonlariyla yaygin portlari tek tikla doldurabilirsiniz.</span></div>
-                    <div class="tip-item"><span class="tip-icon">▸</span><span id="tip2">Port araligi kucuk tutulursa tarama daha hizli tamamlanir (ornek: 1-1024).</span></div>
+                    <div class="tip-item"><span class="tip-icon">▸</span><span id="tip2">Port araligi kucuk tutulursa tarama daha hizli tamamlanir.</span></div>
                     <div class="tip-item"><span class="tip-icon">▸</span><span id="tip3">Port satirina tiklayarak detayli risk bilgisi gorebilirsiniz.</span></div>
                     <div class="tip-item"><span class="tip-icon">▸</span><span id="tip4">Gecmis sekmesinden onceki taramalara geri donebilirsiniz.</span></div>
                 </div>
@@ -393,12 +447,18 @@
                     <button class="btn btn-ghost btn-sm" id="pingBtn" onclick="doPingTest()">⬡ <span id="pingBtnText">PING TEST</span></button>
                     <span class="ping-result ping-wait" id="pingResult" style="display:none"></span>
                 </div>
+                <!-- ENHANCED PROGRESS BAR -->
                 <div class="progress-wrap" id="progressWrap">
-                    <div class="progress-header">
+                    <div class="progress-meta">
                         <span class="progress-label" id="progressText">// HEDEF TARANIYOR...</span>
-                        <span class="progress-timer" id="progressTimer">0.0s</span>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <span class="progress-timer" id="progressTimer">0.0s</span>
+                            <span class="progress-pct" id="progressPct">0%</span>
+                        </div>
                     </div>
-                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                    <div class="progress-bar-outer">
+                        <div class="progress-fill-real" id="progressFillReal" style="width:0%"></div>
+                    </div>
                     <div class="progress-sub" id="progressSub">TCP baglantilari deneniyor...</div>
                 </div>
             </div>
@@ -417,10 +477,22 @@
                     <div class="risk-bar-bg"><div class="risk-bar-fill" id="riskBarFill" style="width:0%"></div></div>
                     <div class="risk-score-label" id="riskLabel">—</div>
                 </div>
-                <div class="card">
+
+                <!-- VIEW TOGGLE: TABLE / CHART / TERMINAL -->
+                <div class="view-toggle">
+                    <button class="vtog active" id="vtogTable" onclick="switchView('table')">📋 <span id="vtLabelTable">LISTE</span></button>
+                    <button class="vtog" id="vtogChart" onclick="switchView('chart')">📊 <span id="vtLabelChart">GRAFIK</span></button>
+                    <button class="vtog" id="vtogTerminal" onclick="switchView('terminal')">⬛ <span id="vtLabelTerminal">TERMINAL</span></button>
+                </div>
+
+                <!-- TABLE VIEW -->
+                <div id="viewTable" class="card">
                     <div class="card-header">
                         <div class="card-title">📋 <span id="portListTitle">ACIK PORT LISTESI</span></div>
-                        <span style="color:var(--dim);font-size:10px;letter-spacing:1px" id="clickHint">↗ DETAY ICIN TIKLA</span>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <span style="color:var(--dim);font-size:10px;letter-spacing:1px" id="clickHint">↗ DETAY ICIN TIKLA</span>
+                            <button class="btn btn-green btn-sm" id="btnCSV" onclick="downloadCSV()">⬇ CSV</button>
+                        </div>
                     </div>
                     <div class="table-wrap">
                         <table><thead><tr>
@@ -428,8 +500,29 @@
                         </tr></thead><tbody id="portTable"></tbody></table>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header"><div class="card-title">⬛ <span id="terminalTitle">TARAMA KAYITLARI</span></div></div>
+
+                <!-- CHART VIEW -->
+                <div id="viewChart" class="card" style="display:none;">
+                    <div class="card-header"><div class="card-title">📊 <span id="chartTitle">PORT DAGILIMLARI</span></div></div>
+                    <div class="chart-wrap" id="chartWrap"></div>
+                    <div class="chart-legend">
+                        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:linear-gradient(var(--neon),var(--neon2))"></div><span id="legendOpen">Acik Port</span></div>
+                        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#ff3060"></div><span id="legendRisk">Riskli Port</span></div>
+                        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#00ff41"></div><span id="legendSafe">Guvenli Port</span></div>
+                    </div>
+                </div>
+
+                <!-- TERMINAL VIEW -->
+                <div id="viewTerminal" class="terminal-mode-full" style="display:none;">
+                    <div class="tmf-header">
+                        <div class="t-dot t-red"></div><div class="t-dot t-yellow"></div><div class="t-dot t-green"></div>
+                        <span style="color:#555;font-size:10px;letter-spacing:2px;margin-left:8px;">signal-x@localhost ~ terminal</span>
+                    </div>
+                    <div class="tmf-body" id="terminalModeLog"></div>
+                </div>
+
+                <!-- OLD TERMINAL LOG (hidden, kept for data) -->
+                <div class="card" style="display:none;">
                     <div class="terminal">
                         <div class="terminal-header">
                             <div class="t-dot t-red"></div><div class="t-dot t-yellow"></div><div class="t-dot t-green"></div>
@@ -457,8 +550,25 @@
                 <div class="stats-grid">
                     <div class="stat-card"><div class="stat-icon">🖧</div><div class="stat-label" id="labelDevices">BULUNAN CIHAZ</div><div class="stat-value" id="statDevices">0</div></div>
                 </div>
+
+                <!-- NETWORK MAP -->
+                <div class="net-map-wrap" id="netMapWrap" style="display:none;">
+                    <div class="net-map-header">
+                        <div class="net-map-title">◈ <span id="netMapTitle">AG HARITASI</span></div>
+                        <span style="color:var(--dim);font-size:10px;" id="netMapSub">Bulunan cihazlar</span>
+                    </div>
+                    <svg id="netMapSvg" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg"></svg>
+                    <div class="net-map-legend">
+                        <div class="nml-item"><div class="nml-dot" style="background:#00f0ff;box-shadow:0 0 6px #00f0ff;"></div><span id="nmLegRouter">Router/Gateway</span></div>
+                        <div class="nml-item"><div class="nml-dot" style="background:var(--neon);box-shadow:0 0 6px var(--neon);"></div><span id="nmLegDevice">Aktif Cihaz</span></div>
+                    </div>
+                </div>
+
                 <div class="card">
-                    <div class="card-header"><div class="card-title">◈ <span id="netListTitle">AKTIF CIHAZLAR</span></div></div>
+                    <div class="card-header">
+                        <div class="card-title">◈ <span id="netListTitle">AKTIF CIHAZLAR</span></div>
+                        <button class="btn btn-green btn-sm" onclick="downloadNetCSV()">⬇ CSV</button>
+                    </div>
                     <div class="table-wrap">
                         <table><thead><tr><th id="thIP">IP ADRESI</th><th id="thDevStatus">DURUM</th></tr></thead><tbody id="netTable"></tbody></table>
                     </div>
@@ -487,6 +597,7 @@
                     <button class="btn btn-secondary btn-sm" id="btnCopy" onclick="copyReport()">📋 KOPYALA</button>
                     <button class="btn btn-secondary btn-sm" id="btnMD" onclick="downloadReport()">⬇ MD INDIR</button>
                     <button class="btn btn-cyan btn-sm" id="btnJSON" onclick="downloadJSON()">⬇ JSON INDIR</button>
+                    <button class="btn btn-green btn-sm" id="btnCSVReport" onclick="downloadCSV()">⬇ CSV INDIR</button>
                 </div>
             </div>
         </div>
@@ -498,22 +609,23 @@
 const RISK_PORTS=[21,23,445,3389,6379];
 let lastScanData=null,scanStartTime=null,currentLang='tr',isLight=false;
 let scanHistory=JSON.parse(localStorage.getItem('sx_history')||'[]');
+let progressInterval=null,lastNetDevices=[];
 
 const PORT_INFO={
     21:{desc:'FTP (File Transfer Protocol) - Dosya transferi icin kullanilir. Sifresiz veri aktarimi yaptigindan yuksek risk tasir.'},
     22:{desc:'SSH (Secure Shell) - Guvenli uzak erisim protokolu. Genellikle guvenlidir ancak zayif sifre kullanimi tehlike olusturabilir.'},
-    23:{desc:'Telnet - Sifresiz uzak erisim protokolu. Tum veri duzz metin olarak iletilir, kullanimi onerilmez.'},
+    23:{desc:'Telnet - Sifresiz uzak erisim protokolu. Tum veri duz metin olarak iletilir, kullanimi onerilmez.'},
     25:{desc:'SMTP - E-posta gonderme protokolu. Acik relay konfigurasyonu spam/relay saldirilarinda kullanilabilir.'},
     53:{desc:'DNS - Alan adi cozumleme servisi. DNS amplifikasyon saldirilarina karsi dikkatli olunmali.'},
     80:{desc:'HTTP - Sifresiz web trafigi. Hassas veriler icin HTTPS (443) tercih edilmelidir.'},
     110:{desc:'POP3 - E-posta alma protokolu. Eski ve genellikle sifresiz surum kullaniliyorsa risk olusturur.'},
     143:{desc:'IMAP - E-posta erisim protokolu. TLS olmadan kullanilmasi onerilmez.'},
     443:{desc:'HTTPS - Sifrelenmis web trafigi. SSL/TLS sertifikasinin gecerli olmasi onemlidir.'},
-    445:{desc:'SMB - Windows dosya paylasim protokolu. WannaCry gibi fidye yazilimi saldirilarina karsı son derece hassastir.'},
-    3306:{desc:'MySQL - Veritabani sunucusu. Internete dogrudan acik olmamalidir, guvenceli bir agda olmalidur.'},
+    445:{desc:'SMB - Windows dosya paylasim protokolu. WannaCry gibi fidye yazilimi saldirilarinа karsi son derece hassastir.'},
+    3306:{desc:'MySQL - Veritabani sunucusu. Internete dogrudan acik olmamalidir.'},
     3389:{desc:'RDP - Uzak Masaustu Protokolu. Kaba kuvvet ve BlueKeep gibi aciklara karsi yuksek risk tasir.'},
     5432:{desc:'PostgreSQL - Veritabani sunucusu. Disariya acik olmamali, guvenceli ag icinde kullanilmalidir.'},
-    6379:{desc:'Redis - Bellek ici veri deposu. Kimlik dogrulamasz konfigurasyonlarda tam erisim saglanabilir, kritik risk.'},
+    6379:{desc:'Redis - Bellek ici veri deposu. Kimlik dogrulamasiz konfigurasyonlarda tam erisim saglanabilir, kritik risk.'},
     8080:{desc:'HTTP-Alt - Alternatif web portu. Gelistirme sunucusu veya proxy olabilir, guvenligi kontrol edilmeli.'},
     8443:{desc:'HTTPS-Alt - Alternatif HTTPS portu. Sertifika ve konfigurasyonu dogrulanmalidir.'},
 };
@@ -547,6 +659,9 @@ const T={
         alertIP:'IP adresi girin!',alertNet:'Ag adresi girin!',alertJSON:'ONCE TARAMA YAPIN!',alertCopied:'RAPOR KOPYALANDI',alertErr:'HATA: ',
         modalTitle:'PORT DETAYI',mlRisk:'RISK SEVIYESI',mlProto:'PROTOKOL',mlStatus:'DURUM',modalStatus:'ACIK',
         pingOK:'HEDEF AKTIF',pingFail:'HEDEF ERISILEMEZ',pingWait:'TEST EDILIYOR...',
+        vtLabelTable:'LISTE',vtLabelChart:'GRAFIK',vtLabelTerminal:'TERMINAL',
+        chartTitle:'PORT DAGILIMLARI',legendOpen:'Acik Port',legendRisk:'Riskli Port',legendSafe:'Guvenli Port',
+        netMapTitle:'AG HARITASI',netMapSub:'Bulunan cihazlar',nmLegRouter:'Router/Gateway',nmLegDevice:'Aktif Cihaz',
     },
     en:{
         logoSub:'AUTOMATIC NETWORK SECURITY AUDITOR v1.0.0',themeLabel:'THEME:',langBtn:'TR',statusText:'ACTIVE',
@@ -576,6 +691,9 @@ const T={
         alertIP:'Please enter an IP address!',alertNet:'Please enter a network address!',alertJSON:'PLEASE RUN A SCAN FIRST!',alertCopied:'REPORT COPIED',alertErr:'ERROR: ',
         modalTitle:'PORT DETAILS',mlRisk:'RISK LEVEL',mlProto:'PROTOCOL',mlStatus:'STATUS',modalStatus:'OPEN',
         pingOK:'TARGET ACTIVE',pingFail:'TARGET UNREACHABLE',pingWait:'TESTING...',
+        vtLabelTable:'LIST',vtLabelChart:'CHART',vtLabelTerminal:'TERMINAL',
+        chartTitle:'PORT DISTRIBUTION',legendOpen:'Open Port',legendRisk:'Risky Port',legendSafe:'Safe Port',
+        netMapTitle:'NETWORK MAP',netMapSub:'Discovered devices',nmLegRouter:'Router/Gateway',nmLegDevice:'Active Device',
     }
 };
 
@@ -589,7 +707,9 @@ function applyLang(){
         'labelOS','labelScore','labelOpen','labelRisk','labelTime','riskMeterTitle','portListTitle','clickHint','terminalTitle',
         'thPort','thService','thRisk','thStatus','netCardTitle','labelBaseIP','labelStartIP','labelEndIP',
         'labelDevices','netListTitle','thIP','thDevStatus','histCardTitle','clearHistBtn','historyEmpty',
-        'reportCardTitle','btnCopy','btnMD','btnJSON','modalTitle','mlRisk','mlProto','mlStatus'];
+        'reportCardTitle','btnCopy','btnMD','btnJSON','modalTitle','mlRisk','mlProto','mlStatus',
+        'vtLabelTable','vtLabelChart','vtLabelTerminal','chartTitle','legendOpen','legendRisk','legendSafe',
+        'netMapTitle','netMapSub','nmLegRouter','nmLegDevice'];
     keys.forEach(k=>{const el=document.getElementById(k);if(el)el.textContent=t(k);});
     document.getElementById('scanBtn').textContent=t('scanBtn');
     document.getElementById('netBtn').textContent=t('netBtn');
@@ -602,13 +722,8 @@ function toggleLang(){currentLang=currentLang==='tr'?'en':'tr';applyLang();}
 
 function toggleLight(){
     isLight=!isLight;
-    if(isLight){
-        document.body.classList.add('light-mode');
-        document.getElementById('lightModeBtn').textContent='🌙';
-    }else{
-        document.body.classList.remove('light-mode');
-        document.getElementById('lightModeBtn').textContent='☀';
-    }
+    if(isLight){document.body.classList.add('light-mode');document.getElementById('lightModeBtn').textContent='🌙';}
+    else{document.body.classList.remove('light-mode');document.getElementById('lightModeBtn').textContent='☀';}
 }
 
 function setTheme(theme,btn){
@@ -627,13 +742,22 @@ function switchTab(tab,el){
     document.getElementById(tab).classList.add('active');
 }
 
+function switchView(view){
+    ['table','chart','terminal'].forEach(v=>{
+        document.getElementById('viewTable').style.display = v==='table'&&view==='table'?'block':'none';
+        document.getElementById('viewChart').style.display = v==='chart'&&view==='chart'?'block':'none';
+        document.getElementById('viewTerminal').style.display = v==='terminal'&&view==='terminal'?'block':'none';
+        document.getElementById('vtog'+v.charAt(0).toUpperCase()+v.slice(1)).classList.toggle('active',v===view);
+    });
+    if(view==='chart' && lastScanData) renderChart(lastScanData);
+    if(view==='terminal' && lastScanData) renderTerminalMode(lastScanData);
+}
+
 function renderQuickPorts(){
     const QUICK=[{port:22,service:'SSH'},{port:80,service:'HTTP'},{port:443,service:'HTTPS'},{port:3306,service:'MySQL'},{port:3389,service:'RDP'},{port:8080,service:'HTTP-Alt'}];
-    const c=document.getElementById('quickPortsList');
-    c.innerHTML='';
+    const c=document.getElementById('quickPortsList');c.innerHTML='';
     QUICK.forEach(qp=>{
-        const btn=document.createElement('div');
-        btn.className='quick-port-btn';
+        const btn=document.createElement('div');btn.className='quick-port-btn';
         btn.innerHTML=`<span class="qp-port">${qp.port}</span><span class="qp-service">${qp.service}</span><span class="qp-arrow">▸</span>`;
         btn.onclick=()=>{document.getElementById('startPort').value=qp.port;document.getElementById('endPort').value=qp.port;};
         c.appendChild(btn);
@@ -647,8 +771,7 @@ function getRiskBadge(port){
 }
 
 function openPortModal(port,service){
-    const isRisk=RISK_PORTS.includes(port);
-    const isMed=port<1024&&!isRisk;
+    const isRisk=RISK_PORTS.includes(port);const isMed=port<1024&&!isRisk;
     const riskText=isRisk?t('badgeHigh'):isMed?t('badgeMed'):t('badgeLow');
     const riskColor=isRisk?'#ff3060':isMed?'#ff6400':'#00f0ff';
     document.getElementById('modalPortNum').textContent=port;
@@ -661,21 +784,237 @@ function openPortModal(port,service){
     document.getElementById('portModal').classList.add('open');
 }
 
-function closeModal(e){if(e.target===document.getElementById('portModal')) document.getElementById('portModal').classList.remove('open');}
+function closeModal(e){if(e.target===document.getElementById('portModal'))document.getElementById('portModal').classList.remove('open');}
 
 function addTerminalLine(text,color='#00ff41'){
     const log=document.getElementById('terminalLog');
-    const line=document.createElement('div');
-    line.className='t-line';line.style.color=color;line.textContent=text;
+    const line=document.createElement('div');line.className='t-line';line.style.color=color;line.textContent=text;
     log.appendChild(line);log.scrollTop=log.scrollHeight;
 }
 
-function saveToHistory(data,elapsed,startPort,endPort){
-    const entry={
-        id:Date.now(),target:data.target,elapsed,startPort,endPort,
-        openCount:data.open_ports.length,score:data.security_score,
-        os:data.os_guess,date:new Date().toLocaleString(),data
+// ===================== PROGRESS BAR =====================
+function startProgressAnimation(totalPorts){
+    const fillEl=document.getElementById('progressFillReal');
+    const pctEl=document.getElementById('progressPct');
+    const timerEl=document.getElementById('progressTimer');
+    let pct=0;
+    const estimatedMs=Math.min(totalPorts*0.25+1000,20000);
+    progressInterval=setInterval(()=>{
+        const elapsed=(Date.now()-scanStartTime)/1000;
+        timerEl.textContent=elapsed.toFixed(1)+'s';
+        // Simulate progress: fast at start, slow near end
+        const timeFrac=Math.min((Date.now()-scanStartTime)/estimatedMs,0.95);
+        pct=Math.round(timeFrac*100);
+        fillEl.style.width=pct+'%';
+        pctEl.textContent=pct+'%';
+    },100);
+}
+
+function stopProgressAnimation(){
+    clearInterval(progressInterval);
+    const fillEl=document.getElementById('progressFillReal');
+    const pctEl=document.getElementById('progressPct');
+    fillEl.style.width='100%';
+    pctEl.textContent='100%';
+    setTimeout(()=>{document.getElementById('progressWrap').style.display='none';},500);
+}
+
+// ===================== CHART =====================
+function renderChart(data){
+    const wrap=document.getElementById('chartWrap');wrap.innerHTML='';
+    if(data.open_ports.length===0){
+        wrap.innerHTML='<div style="color:var(--dim);font-size:11px;letter-spacing:2px;padding:20px;">// ACIK PORT BULUNAMADI</div>';
+        return;
+    }
+    const maxPort=Math.max(...data.open_ports.map(p=>p.port));
+    const maxH=90;
+    data.open_ports.forEach(p=>{
+        const isRisk=RISK_PORTS.includes(p.port);
+        const h=Math.max(12,Math.round((p.port/maxPort)*maxH));
+        const cls=isRisk?'risk':'open';
+        const group=document.createElement('div');group.className='chart-bar-group';
+        group.innerHTML=`
+            <div class="chart-val">${p.port}</div>
+            <div class="chart-bar-bg" style="height:${maxH}px;">
+                <div class="chart-bar-fill ${cls}" style="height:${h}px;"></div>
+            </div>
+            <div class="chart-label">${(p.service||'?').substring(0,7)}</div>`;
+        wrap.appendChild(group);
+    });
+    // Summary bars
+    const totalOpen=data.open_ports.length;
+    const riskCount=data.open_ports.filter(p=>RISK_PORTS.includes(p.port)).length;
+    const safeCount=totalOpen-riskCount;
+    const sep=document.createElement('div');sep.style='width:2px;background:var(--border);height:80px;align-self:center;margin:0 8px;';
+    wrap.appendChild(sep);
+    const mkSummary=(val,label,cls,color)=>{
+        const h=Math.max(10,Math.round((val/Math.max(totalOpen,1))*maxH));
+        const g=document.createElement('div');g.className='chart-bar-group';
+        g.innerHTML=`<div class="chart-val" style="color:${color}">${val}</div>
+            <div class="chart-bar-bg" style="height:${maxH}px;"><div class="chart-bar-fill ${cls}" style="height:${h}px;"></div></div>
+            <div class="chart-label">${label}</div>`;
+        wrap.appendChild(g);
     };
+    mkSummary(totalOpen,'ACIK','open','var(--neon)');
+    mkSummary(riskCount,'RISKLI','risk','#ff3060');
+    mkSummary(safeCount,'GUVENLI','safe','#00ff41');
+}
+
+// ===================== TERMINAL MODE =====================
+function renderTerminalMode(data){
+    const log=document.getElementById('terminalModeLog');log.innerHTML='';
+    const elapsed=((Date.now()-scanStartTime)/1000).toFixed(1);
+    const startPort=data.open_ports.length>0?Math.min(...data.open_ports.map(p=>p.port)):0;
+    const lines=[
+        {t:`signal-x@localhost:~$ ./signal-x scan --target ${data.target}`,cls:'info'},
+        {t:`[*] Signal-X v1.0.0 baslatildi`,cls:'sys'},
+        {t:`[*] Hedef: ${data.target}`,cls:'info'},
+        {t:`[*] Tarama suresi: ${elapsed}s`,cls:''},
+        {t:`[*] OS tespiti: ${data.os_guess}`,cls:'sys'},
+        {t:`[*] Guvenlik notu: ${data.security_score}`,cls:''},
+        {t:``,cls:''},
+        {t:`[+] Tarama sonuclari:`,cls:'info'},
+    ];
+    data.open_ports.forEach(p=>{
+        const isRisk=RISK_PORTS.includes(p.port);
+        lines.push({t:`  ${isRisk?'[!]':'[+]'} ${p.port}/tcp   ACIK   ${p.service||'unknown'}${isRisk?' <<< RISKLI PORT':''}`,cls:isRisk?'risk':''});
+    });
+    if(data.open_ports.length===0) lines.push({t:`  [-] Acik port bulunamadi`,cls:'warn'});
+    lines.push({t:``,cls:''});
+    lines.push({t:`[=] Tarama tamamlandi. Guvenlik notu: ${data.security_score}`,cls:'warn'});
+    lines.push({t:`signal-x@localhost:~$ _`,cls:'info'});
+
+    lines.forEach((l,i)=>{
+        setTimeout(()=>{
+            const div=document.createElement('div');
+            div.className=`tm-line ${l.cls}`;div.textContent=l.t;
+            log.appendChild(div);log.scrollTop=log.scrollHeight;
+        },i*40);
+    });
+}
+
+// ===================== NETWORK MAP =====================
+function renderNetworkMap(devices, baseIP){
+    if(devices.length===0){document.getElementById('netMapWrap').style.display='none';return;}
+    document.getElementById('netMapWrap').style.display='block';
+    const svg=document.getElementById('netMapSvg');svg.innerHTML='';
+    const W=700,H=300;
+    const cx=W/2,cy=H/2;
+    const neonColor='var(--neon)';
+    const cyan='#00f0ff';
+
+    // Draw defs
+    svg.innerHTML=`
+        <defs>
+            <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:rgba(30,10,60,0.6)"/>
+                <stop offset="100%" style="stop-color:rgba(7,5,15,0)"/>
+            </radialGradient>
+            <filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <rect width="${W}" height="${H}" fill="url(#bgGrad)"/>
+    `;
+
+    // Grid lines
+    for(let i=0;i<8;i++){
+        const y=i*(H/7);
+        const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+        ln.setAttribute('x1','0');ln.setAttribute('y1',y);ln.setAttribute('x2',W);ln.setAttribute('y2',y);
+        ln.setAttribute('stroke','rgba(191,95,255,0.06)');ln.setAttribute('stroke-width','1');
+        svg.appendChild(ln);
+    }
+    for(let i=0;i<14;i++){
+        const x=i*(W/13);
+        const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+        ln.setAttribute('x1',x);ln.setAttribute('y1','0');ln.setAttribute('x2',x);ln.setAttribute('y2',H);
+        ln.setAttribute('stroke','rgba(191,95,255,0.06)');ln.setAttribute('stroke-width','1');
+        svg.appendChild(ln);
+    }
+
+    // Radar rings
+    [60,100,140].forEach((r,i)=>{
+        const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r',r);
+        c.setAttribute('fill','none');c.setAttribute('stroke','rgba(191,95,255,0.12)');c.setAttribute('stroke-width','1');
+        c.setAttribute('stroke-dasharray','4 4');
+        svg.appendChild(c);
+    });
+
+    // Router/gateway node at center
+    const routerG=document.createElementNS('http://www.w3.org/2000/svg','g');
+    routerG.innerHTML=`
+        <circle cx="${cx}" cy="${cy}" r="22" fill="rgba(0,240,255,0.08)" stroke="${cyan}" stroke-width="2" filter="url(#glow)"/>
+        <circle cx="${cx}" cy="${cy}" r="14" fill="rgba(0,240,255,0.15)" stroke="${cyan}" stroke-width="1"/>
+        <text x="${cx}" y="${cy+5}" text-anchor="middle" fill="${cyan}" font-size="14" font-family="monospace">⬡</text>
+        <text x="${cx}" y="${cy+36}" text-anchor="middle" fill="${cyan}" font-size="9" font-family="monospace" letter-spacing="1">${baseIP}.1</text>
+    `;
+    svg.appendChild(routerG);
+
+    // Place devices in a circle around the router
+    const count=devices.length;
+    const radius=Math.min(130, 60+count*10);
+    devices.forEach((dev,i)=>{
+        const angle=(2*Math.PI*i/count)-Math.PI/2;
+        const dx=cx+radius*Math.cos(angle);
+        const dy=cy+radius*Math.sin(angle);
+
+        // Line from router to device
+        const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1',cx);line.setAttribute('y1',cy);
+        line.setAttribute('x2',dx);line.setAttribute('y2',dy);
+        line.setAttribute('stroke','rgba(191,95,255,0.25)');line.setAttribute('stroke-width','1');
+        line.setAttribute('stroke-dasharray','4 3');
+        svg.appendChild(line);
+
+        // Device node
+        const dg=document.createElementNS('http://www.w3.org/2000/svg','g');
+        dg.setAttribute('class','device-node');
+        dg.setAttribute('style',`animation-delay:${i*0.1}s`);
+        const shortIP=dev.ip.split('.').pop();
+        dg.innerHTML=`
+            <circle cx="${dx}" cy="${dy}" r="18" fill="rgba(191,95,255,0.08)" stroke="var(--neon)" stroke-width="1.5" filter="url(#glow)"/>
+            <circle cx="${dx}" cy="${dy}" r="10" fill="rgba(191,95,255,0.2)" stroke="var(--neon)" stroke-width="1"/>
+            <text x="${dx}" y="${dy+4}" text-anchor="middle" fill="var(--neon)" font-size="9" font-family="monospace" font-weight="bold">.${shortIP}</text>
+            <text x="${dx}" y="${dy+30}" text-anchor="middle" fill="rgba(191,95,255,0.7)" font-size="8" font-family="monospace">${dev.ip}</text>
+        `;
+        svg.appendChild(dg);
+    });
+}
+
+// ===================== CSV DOWNLOAD =====================
+function downloadCSV(){
+    if(!lastScanData){alert(t('alertJSON'));return;}
+    const rows=[['Port','Servis/Service','Risk','Durum/Status']];
+    lastScanData.open_ports.forEach(p=>{
+        const isRisk=RISK_PORTS.includes(p.port);
+        const risk=isRisk?t('badgeHigh'):(p.port<1024?t('badgeMed'):t('badgeLow'));
+        rows.push([p.port,p.service||'Unknown',risk,t('badgeOpen')]);
+    });
+    // Add summary
+    rows.push([]);
+    rows.push(['Hedef/Target',lastScanData.target,'','']);
+    rows.push(['OS',lastScanData.os_guess,'','']);
+    rows.push(['Guvenlik Notu/Score',lastScanData.security_score,'','']);
+
+    const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+    const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=`signal-x-${lastScanData.target}-${new Date().toISOString().slice(0,10)}.csv`;a.click();
+}
+
+function downloadNetCSV(){
+    if(!lastNetDevices.length){alert(t('alertJSON'));return;}
+    const rows=[['IP Adresi/Address','Durum/Status']];
+    lastNetDevices.forEach(d=>rows.push([d.ip,t('badgeAlive')]));
+    const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+    const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=`signal-x-network-${new Date().toISOString().slice(0,10)}.csv`;a.click();
+}
+
+// ===================== HISTORY =====================
+function saveToHistory(data,elapsed,startPort,endPort){
+    const entry={id:Date.now(),target:data.target,elapsed,startPort,endPort,openCount:data.open_ports.length,score:data.security_score,os:data.os_guess,date:new Date().toLocaleString(),data};
     scanHistory.unshift(entry);
     if(scanHistory.length>20) scanHistory=scanHistory.slice(0,20);
     localStorage.setItem('sx_history',JSON.stringify(scanHistory));
@@ -685,14 +1024,10 @@ function saveToHistory(data,elapsed,startPort,endPort){
 
 function renderHistory(){
     const list=document.getElementById('historyList');
-    if(scanHistory.length===0){
-        list.innerHTML=`<div class="history-empty">${t('historyEmpty')}</div>`;
-        return;
-    }
+    if(scanHistory.length===0){list.innerHTML=`<div class="history-empty">${t('historyEmpty')}</div>`;return;}
     list.innerHTML='';
     scanHistory.forEach(h=>{
-        const item=document.createElement('div');
-        item.className='history-item';
+        const item=document.createElement('div');item.className='history-item';
         item.innerHTML=`
             <div class="history-left">
                 <div class="history-target">${h.target}</div>
@@ -703,8 +1038,7 @@ function renderHistory(){
                 <span class="score-badge score-${h.score}" style="width:32px;height:32px;font-size:14px">${h.score}</span>
             </div>`;
         item.onclick=()=>{
-            lastScanData=h.data;
-            scanStartTime=Date.now()-parseFloat(h.elapsed)*1000;
+            lastScanData=h.data;scanStartTime=Date.now()-parseFloat(h.elapsed)*1000;
             document.getElementById('welcomeScreen').style.display='none';
             showScanResults(h.data,h.startPort,h.endPort);
             document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -716,76 +1050,56 @@ function renderHistory(){
     });
 }
 
-function clearHistory(){
-    scanHistory=[];
-    localStorage.removeItem('sx_history');
-    document.getElementById('historyBadge').textContent='0';
-    renderHistory();
-}
+function clearHistory(){scanHistory=[];localStorage.removeItem('sx_history');document.getElementById('historyBadge').textContent='0';renderHistory();}
 
+// ===================== PING TEST =====================
 async function doPingTest(){
     const target=document.getElementById('target').value.trim();
     if(!target){alert(t('alertIP'));return;}
     const res=document.getElementById('pingResult');
-    res.style.display='inline-block';
-    res.className='ping-result ping-wait';
-    res.textContent=t('pingWait');
+    res.style.display='inline-block';res.className='ping-result ping-wait';res.textContent=t('pingWait');
     document.getElementById('pingBtn').disabled=true;
     try{
-        const r=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({target,start_port:80,end_port:80})});
+        const r=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target,start_port:80,end_port:80})});
         const d=await r.json();
-        if(d.success){
-            res.className='ping-result ping-ok';
-            res.textContent='✓ '+t('pingOK');
-        }else{
-            res.className='ping-result ping-fail';
-            res.textContent='✗ '+t('pingFail');
-        }
-    }catch(e){
-        res.className='ping-result ping-fail';
-        res.textContent='✗ '+t('pingFail');
-    }
+        if(d.success){res.className='ping-result ping-ok';res.textContent='✓ '+t('pingOK');}
+        else{res.className='ping-result ping-fail';res.textContent='✗ '+t('pingFail');}
+    }catch(e){res.className='ping-result ping-fail';res.textContent='✗ '+t('pingFail');}
     document.getElementById('pingBtn').disabled=false;
 }
 
-function resetPing(){
-    document.getElementById('pingResult').style.display='none';
-}
+function resetPing(){document.getElementById('pingResult').style.display='none';}
 
+// ===================== MAIN SCAN =====================
 async function startScan(){
     const target=document.getElementById('target').value.trim();
     const startPort=parseInt(document.getElementById('startPort').value);
     const endPort=parseInt(document.getElementById('endPort').value);
     if(!target){alert(t('alertIP'));return;}
-
+    const totalPorts=endPort-startPort+1;
     const btn=document.getElementById('scanBtn');
     btn.disabled=true;btn.textContent=t('scanningBtn');
     document.getElementById('progressWrap').style.display='block';
+    document.getElementById('progressFillReal').style.width='0%';
+    document.getElementById('progressPct').textContent='0%';
     document.getElementById('scanResults').style.display='none';
     document.getElementById('welcomeScreen').style.display='none';
     document.getElementById('progressText').textContent=t('progressText');
     document.getElementById('progressSub').textContent=t('progressSub');
     scanStartTime=Date.now();
-    const timerEl=document.getElementById('progressTimer');
-    const interval=setInterval(()=>{timerEl.textContent=((Date.now()-scanStartTime)/1000).toFixed(1)+'s';},100);
-
+    startProgressAnimation(totalPorts);
     try{
-        const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({target,start_port:startPort,end_port:endPort})});
+        const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target,start_port:startPort,end_port:endPort})});
         const data=await res.json();
         lastScanData=data;
-        clearInterval(interval);
-        document.getElementById('progressWrap').style.display='none';
+        stopProgressAnimation();
         const elapsed=((Date.now()-scanStartTime)/1000).toFixed(1);
         saveToHistory(data,elapsed,startPort,endPort);
         showScanResults(data,startPort,endPort);
     }catch(e){
-        clearInterval(interval);
+        stopProgressAnimation();
         alert(t('alertErr')+e.message);
-    }finally{
-        btn.disabled=false;btn.textContent=t('scanBtn');
-    }
+    }finally{btn.disabled=false;btn.textContent=t('scanBtn');}
 }
 
 function showScanResults(data,startPort,endPort){
@@ -806,19 +1120,17 @@ function showScanResults(data,startPort,endPort){
     document.getElementById('statTime').textContent=elapsed+'s';
     const score=data.security_score;
     document.getElementById('statScore').innerHTML=`<span class="score-badge score-${score}">${score}</span>`;
-
     const riskColors={A:'#00ff41',B:'#00ff41',C:'#ffc800',D:'#ff6400',E:'#ff3060',F:'#ff3060'};
     document.getElementById('riskBarFill').style.width=riskPct+'%';
     document.getElementById('riskLabel').style.color=riskColors[score]||'#ff3060';
     document.getElementById('riskLabel').textContent=score;
-
     document.getElementById('sideOpenVal').textContent=data.open_ports.length;
     document.getElementById('sideOpenBar').style.width=Math.min(100,data.open_ports.length*10)+'%';
     document.getElementById('sideRiskVal').textContent=score;
     document.getElementById('sideSureVal').textContent=elapsed+'s';
 
-    const tbody=document.getElementById('portTable');
-    tbody.innerHTML='';
+    // Port table
+    const tbody=document.getElementById('portTable');tbody.innerHTML='';
     if(data.open_ports.length===0){
         tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;color:var(--dim);padding:40px;letter-spacing:2px">${t('noPort')}</td></tr>`;
     }else{
@@ -832,39 +1144,36 @@ function showScanResults(data,startPort,endPort){
         });
     }
 
+    // Terminal log (hidden)
     document.getElementById('terminalLog').innerHTML='';
     addTerminalLine(`[+] Signal-X tarama baslatildi`,'#00f0ff');
     addTerminalLine(`[+] Hedef: ${data.target}`);
-    addTerminalLine(`[+] Port araligi: ${startPort}-${endPort} (${totalPorts} port)`);
-    addTerminalLine(`[+] Tarama suresi: ${elapsed}s`);
-    addTerminalLine(`[+] OS tespiti: ${data.os_guess}`,'#bf5fff');
-    if(data.open_ports.length===0){
-        addTerminalLine(`[!] Acik port bulunamadi`,'#ffc800');
-    }else{
-        data.open_ports.forEach(p=>{
-            const isRisk=RISK_PORTS.includes(p.port);
-            addTerminalLine(`[${isRisk?'!':'+'}] Port ${p.port}/tcp acik - ${p.service||'unknown'}`,isRisk?'#ff3060':'#00ff41');
-        });
-    }
-    addTerminalLine(`[=] Guvenlik notu: ${score} | Tamamlandi`,'#ffd700');
+    addTerminalLine(`[+] OS: ${data.os_guess}`,'#bf5fff');
+    data.open_ports.forEach(p=>{
+        const isRisk=RISK_PORTS.includes(p.port);
+        addTerminalLine(`[${isRisk?'!':'+'}] Port ${p.port}/tcp - ${p.service||'unknown'}`,isRisk?'#ff3060':'#00ff41');
+    });
+    addTerminalLine(`[=] Guvenlik notu: ${score}`,'#ffd700');
+
     document.getElementById('reportContent').textContent=data.report_md;
+    // Reset to table view
+    switchView('table');
 }
 
+// ===================== NETWORK SCAN =====================
 async function startNetScan(){
     const baseIP=document.getElementById('baseIP').value.trim();
     const start=parseInt(document.getElementById('startIP').value);
     const end=parseInt(document.getElementById('endIP').value);
     if(!baseIP){alert(t('alertNet'));return;}
-    const btn=document.getElementById('netBtn');
-    btn.disabled=true;btn.textContent=t('netScanningBtn');
+    const btn=document.getElementById('netBtn');btn.disabled=true;btn.textContent=t('netScanningBtn');
     try{
-        const res=await fetch('/api/network',{method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({base_ip:baseIP,start,end})});
+        const res=await fetch('/api/network',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({base_ip:baseIP,start,end})});
         const data=await res.json();
+        lastNetDevices=data.devices;
         document.getElementById('netResults').style.display='block';
         document.getElementById('statDevices').textContent=data.devices.length;
-        const tbody=document.getElementById('netTable');
-        tbody.innerHTML='';
+        const tbody=document.getElementById('netTable');tbody.innerHTML='';
         if(data.devices.length===0){
             tbody.innerHTML=`<tr><td colspan="2" style="text-align:center;color:var(--dim);padding:40px;letter-spacing:2px">${t('noDevice')}</td></tr>`;
         }else{
@@ -872,14 +1181,17 @@ async function startNetScan(){
                 tbody.innerHTML+=`<tr><td><strong style="color:var(--neon)">${d.ip}</strong></td><td><span class="badge badge-alive">${t('badgeAlive')}</span></td></tr>`;
             });
         }
+        renderNetworkMap(data.devices, baseIP);
     }catch(e){alert(t('alertErr')+e.message);}
     finally{btn.disabled=false;btn.textContent=t('netBtn');}
 }
 
+// ===================== REPORT ACTIONS =====================
 function copyReport(){navigator.clipboard.writeText(document.getElementById('reportContent').textContent);alert(t('alertCopied'));}
 function downloadReport(){const blob=new Blob([document.getElementById('reportContent').textContent],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='signal-x-rapor.md';a.click();}
 function downloadJSON(){if(!lastScanData){alert(t('alertJSON'));return;}const blob=new Blob([JSON.stringify(lastScanData,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='signal-x-rapor.json';a.click();}
 
+// ===================== CLOCK =====================
 function updateClock(){
     const now=new Date();
     const hh=String(now.getHours()).padStart(2,'0');
@@ -888,17 +1200,13 @@ function updateClock(){
     document.getElementById('headerClock').textContent=`${hh}:${mm}:${ss}`;
     const dd=String(now.getDate()).padStart(2,'0');
     const mo=String(now.getMonth()+1).padStart(2,'0');
-    const yy=now.getFullYear();
-    document.getElementById('headerDate').textContent=`${dd}.${mo}.${yy}`;
+    document.getElementById('headerDate').textContent=`${dd}.${mo}.${now.getFullYear()}`;
 }
 
 // INIT
-updateClock();
-setInterval(updateClock,1000);
+updateClock();setInterval(updateClock,1000);
 document.getElementById('historyBadge').textContent=scanHistory.length;
-renderQuickPorts();
-renderHistory();
-applyLang();
+renderQuickPorts();renderHistory();applyLang();
 </script>
 </body>
 </html>
