@@ -1,7 +1,7 @@
 ﻿# Signal-X — Otomatik Ag Guvenlik Denetcisi
 
-Rust ile yazilmis, web tabanli ag guvenlik denetim araci.
-TCP port tarama, cihaz kesfi, OS tespiti ve guvenlik raporlama ozellikleri sunar.
+Rust ile yazilmis ag guvenlik denetim araci.
+TCP port tarama, cihaz kesfi, OS tespiti, guvenlik raporlama ve CLI destegi sunar.
 
 ---
 
@@ -9,15 +9,39 @@ TCP port tarama, cihaz kesfi, OS tespiti ve guvenlik raporlama ozellikleri sunar
 
 **Gereksinimler:** Rust 1.70+, Cargo
 ```bash
-# Projeyi klonla
 git clone https://github.com/yusufiyilmaz/signal-x.git
 cd signal-x
-
-# Calistir
 cargo run
 ```
 
 Tarayicide ac: [http://127.0.0.1:3000](http://127.0.0.1:3000)
+
+---
+
+## Kullanim
+
+### Web Panel Modu
+```bash
+cargo run
+```
+
+Tarayicide `http://127.0.0.1:3000` adresini ac.
+
+### CLI Modu
+```bash
+# Port tarama - Markdown cikti
+cargo run -- pentest port-scan 192.168.1.1 --range 1-1024 --format md
+
+# Port tarama - JSON cikti
+cargo run -- pentest port-scan 192.168.1.1 --range 1-1024 --format json
+
+# Ag kesfi
+cargo run -- pentest net-discover 192.168.1 --range 1-254
+
+# Yardim
+cargo run -- --help
+cargo run -- pentest port-scan --help
+```
 
 ---
 
@@ -27,49 +51,20 @@ Tarayicide ac: [http://127.0.0.1:3000](http://127.0.0.1:3000)
 - **Ag Kesfi** — Ping sweep ile agdaki aktif cihazlari bulma
 - **OS Tespiti** — TTL analizi ile Windows / Linux / Router tahmini
 - **Guvenlik Puani** — Acik portlara gore A-F harf notu
-- **Markdown Rapor** — Tarama sonuclarini export etme
-- **Web Panel** — 5 degistirilebilir tema ile tarayici arayuzu
-
----
-
-## Kullanim
-
-### Port Tarama
-1. Web panelinde **Port Tarama** sekmesini ac
-2. Hedef IP adresini gir → ornek: `192.168.1.1`
-3. Port araligini belirle → ornek: `1` ile `1000`
-4. **Tara** butonuna bas, sonuclar ekrana gelir
-
-### Ag Kesfi
-1. **Ag Kesfi** sekmesini ac
-2. Ag adresini gir → ornek: `192.168.1`
-3. Aralik belirle → ornek: `1` ile `254`
-4. **Tara** butonuna bas, aktif cihazlar listelenir
-
-### Rapor
-1. Tarama tamamlandiktan sonra **Rapor** sekmesine gec
-2. Markdown veya JSON formatinda export edebilirsin
-
----
-
-## Web Panel Temaları
-
-Sag ustteki renkli dairelerle tema degistirilebilir:
-
-| Tema | Renk Paleti |
-|------|-------------|
-| Cyberpunk | Mor ve pembe neon |
-| Matrix | Yesil |
-| Tehlike | Kirmizi |
-| Cyber | Mavi |
-| Gold | Altin |
+- **CLI Desteği** — Komut satirindan port tarama ve ag kesfi
+- **JSON + Markdown Rapor** — Tarama sonuclarini iki formatta export etme
+- **CSV Export** — Port sonuclarini CSV olarak indirme
+- **HTML Rapor** — Guzel formatlı HTML rapor export
+- **Web Panel** — 5 degistirilebilir tema, TR/EN dil destegi
+- **Tarama Gecmisi** — Onceki taramalara geri donme
+- **Port Detay Modali** — Her port icin risk bilgisi ve guvenlik onerileri
 
 ---
 
 ## Proje Yapisi
 signal-x/
 ├── src/
-│   ├── main.rs        # Giris noktasi, modulleri baglar
+│   ├── main.rs        # Giris noktasi + CLI (clap)
 │   ├── scanner.rs     # Async paralel TCP port tarama + 2 unit test
 │   ├── discovery.rs   # Ping sweep ile ag cihaz kesfi
 │   ├── os_detect.rs   # TTL analizi ile OS tespiti
@@ -128,7 +123,7 @@ cargo test
 ## Ogrendiklerim
 
 **Async programlama:** Tokio ile `tokio::spawn` kullanarak her porta ayri gorev actim.
-Paralel tarama sayesinde yuzlerce portu ayni anda tarayabildim; sirayla yapilsaydi cok yavas olurdu.
+Paralel tarama sayesinde yuzlerce portu ayni anda tarayabildim.
 
 **TCP baglanti mantigi:** Porta TCP baglantisi acmaya calismak yeterli.
 Baglanti kurulursa port acik, kurulamazsa kapali. 200ms timeout ile hizli ve dogru sonuc aldim.
@@ -136,14 +131,14 @@ Baglanti kurulursa port acik, kurulamazsa kapali. 200ms timeout ile hizli ve dog
 **TTL analizi ile OS tespiti:** Windows TTL=128, Linux TTL=64, routerlar daha dusuk deger gonderir.
 Ping ciktisini parse ederek isletim sistemini tahmin ettim.
 
-**Axum web framework:** REST API kurmak, JSON islemek, statik dosya sunmak icin Axum kullandim.
-Router yapisini ve handler fonksiyonlarini ogrendim.
+**CLI gelistirme:** Clap kutuphanesi ile arguman parse etmeyi ogrendim.
+Hem web panel hem komut satirindan calisabilen esnek bir yapi kurdum.
 
-**Rust modul sistemi:** Her sorumlulugu ayri dosyaya bolduk. Tek dosyada olmamasi
-hem okunurlugu hem de bakimi kolaylastirdi.
+**Axum web framework:** REST API kurmak, JSON islemek, statik dosya sunmak icin Axum kullandim.
+
+**Rust modul sistemi:** Her sorumlulugu ayri dosyaya bolduk.
 
 **Ownership ve borrowing:** `&str` ile `String` farkini, `Clone` ve `Copy` traitlerini kavradim.
-Baslangicta en zorlayici konu buydu.
 
 **Guvenlik dusuncesi:** 21 (FTP), 23 (Telnet), 445 (SMB), 3389 (RDP) gibi portlarin
 neden riskli sayildigini ogrendim ve puanlama sistemine dahil ettim.
