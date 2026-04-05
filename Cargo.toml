@@ -1,5 +1,5 @@
 ﻿[package]
-name = "signal-x"
+name = "pentester"
 version = "1.0.0"
 edition = "2021"
 authors = ["Yusuf Yilmaz"]
@@ -17,3 +17,4 @@ colored = "2"
 chrono = "0.4"
 open = "5"
 clap = { version = "4", features = ["derive"] }
+

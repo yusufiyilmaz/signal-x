@@ -597,6 +597,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "df94ce210e5bc13cb6651479fa48d14f601d9858cfe0467f43ae157023b938d3"
 
 [[package]]
+name = "pentester"
+version = "1.0.0"
+dependencies = [
+ "axum",
+ "chrono",
+ "clap",
+ "colored",
+ "open",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tower-http",
+]
+
+[[package]]
 name = "percent-encoding"
 version = "2.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -733,21 +748,6 @@ checksum = "c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b"
 dependencies = [
  "errno",
  "libc",
-]
-
-[[package]]
-name = "signal-x"
-version = "1.0.0"
-dependencies = [
- "axum",
- "chrono",
- "clap",
- "colored",
- "open",
- "serde",
- "serde_json",
- "tokio",
- "tower-http",
 ]
 
 [[package]]
