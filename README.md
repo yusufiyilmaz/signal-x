@@ -1,158 +1,169 @@
-﻿# Signal-X — Otomatik Ag Guvenlik Denetcisi
+﻿# Signal-X
 
-Rust ile yazilmis ag guvenlik denetim araci. TCP port tarama, banner grabbing,
-servis imzasi eslestirme, OS tespiti, guvenlik puanlama ve web paneli sunar.
+[![Rust](https://img.shields.io/badge/rust-1.70+-orange?style=flat-square&logo=rust)](https://www.rust-lang.org)
+[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-12%20passed-green?style=flat-square)]()
+[![Branch](https://img.shields.io/badge/branch-midterm%2Fyusuf--yilmaz-purple?style=flat-square)]()
 
----
-
-## Hizli Baslangic
-
-**Gereksinimler:** Rust 1.70+, Cargo
-
-Tarayicide ac: http://127.0.0.1:3000 (cargo run calistirildiktan sonra)
-
----
-
-## Kullanim
-
-### Web Panel
-cargo run
-
-### CLI
-
-Port tarama Markdown:
-cargo run -- pentest port-scan 192.168.1.1 --range 1-1024 --format md
-
-Port tarama JSON:
-cargo run -- pentest port-scan 192.168.1.1 --range 1-1024 --format json
-
-Tum portlar (acik+kapali+filtreli):
-cargo run -- pentest port-scan 192.168.1.1 --range 1-1024 --all
-
-Timeout ayarla:
-cargo run -- pentest port-scan 192.168.1.1 --range 1-1024 --timeout 500
-
-Ag kesfi:
-cargo run -- pentest net-discover 192.168.1 --range 1-254
+Rust ile yazilmis otomatik ag guvenlik denetim araci. TCP port tarama, banner grabbing,
+servis imzasi eslestirme, OS tespiti ve guvenlik puanlama ozellikleri sunar.
 
 ---
 
 ## Ozellikler
 
-- Port Tarama: Async paralel TCP tarama, open/closed/filtered port tespiti
-- Banner Grabbing: Porta baglanip servis banner bilgisini okuma
-- Servis Imzasi: Banner dan versiyon tespiti (OpenSSH 8.4, Apache 2.4 vb.)
-- Ag Kesfi: Ping sweep ile agdaki aktif cihazlari bulma
-- OS Tespiti: TTL analizi ile Windows/Linux/Router tahmini
-- Guvenlik Puani: Acik portlara gore A-F harf notu
-- CLI Destegi: clap ile komut satirindan tam kullanim
-- Coklu Tarama: Birden fazla IP adresini ayni anda tarama
-- Raporlama: JSON, Markdown, CSV, HTML formatlarinda export
-- Web Panel: 5 tema, TR/EN dil, karanlik mod, tarama gecmisi
+| Ozellik | Aciklama |
+|---------|----------|
+| Port Tarama | Async paralel TCP, open/closed/filtered tespiti |
+| Banner Grabbing | Servis banner okuma ve versiyon tespiti |
+| Servis Imzasi | SSH, HTTP, FTP, MySQL versiyon eslestirme |
+| OS Tespiti | TTL analizi — Windows/Linux/Router |
+| Guvenlik Puani | A-F harf notu sistemi |
+| CLI | clap ile tam komut satiri desteği |
+| Coklu Tarama | Birden fazla IP ayni anda |
+| Web Panel | 5 tema, TR/EN, karanlık mod |
+| Raporlama | JSON, Markdown, CSV, HTML |
+
+---
+
+## Hizli Baslangic
+```bash
+git clone https://github.com/yusufiyilmaz/signal-x.git
+cd signal-x
+cargo run
+```
+
+Web panel: **http://127.0.0.1:3000** (cargo run calistirildiktan sonra)
+
+---
+
+## CLI Kullanim
+```bash
+# Port tarama - Markdown
+cargo run -- pentest port-scan 192.168.1.1 --range 1-1024 --format md
+
+# Port tarama - JSON
+cargo run -- pentest port-scan 192.168.1.1 --range 1-1024 --format json
+
+# Tum portlar (open + closed + filtered)
+cargo run -- pentest port-scan 192.168.1.1 --range 1-1024 --all
+
+# Timeout ayarla
+cargo run -- pentest port-scan 192.168.1.1 --range 1-1024 --timeout 500
+
+# Ag kesfi
+cargo run -- pentest net-discover 192.168.1 --range 1-254
+
+# Yardim
+cargo run -- --help
+```
 
 ---
 
 ## Port Durumlari
 
-- open: Baglanti kuruldu, port acik
-- closed: Baglanti reddedildi, port kapali
-- filtered: Zaman asimi, firewall engelliyor olabilir
+| Durum | Anlam |
+|-------|-------|
+| `open` | Baglanti kuruldu — port acik |
+| `closed` | Baglanti reddedildi — port kapali |
+| `filtered` | Zaman asimi — firewall engelliyor olabilir |
 
 ---
 
-## Proje Yapisi
-
-src/main.rs        - Giris noktasi + CLI (clap)
-src/scanner.rs     - Async TCP port tarama + banner grabbing + versiyon tespiti
-src/discovery.rs   - Ping sweep ile ag cihaz kesfi
-src/os_detect.rs   - TTL analizi ile OS tespiti
-src/report.rs      - Guvenlik puanlama + Markdown rapor
-src/web.rs         - Axum REST API + coklu hedef tarama
-static/index.html  - Web panel (5 tema, TR/EN)
-Cargo.toml
-
----
+## Mimari                                                                signal-x/
+├── src/
+│   ├── main.rs        # CLI giris noktasi (clap)
+│   ├── scanner.rs     # TCP tarama + banner grabbing + versiyon tespiti
+│   ├── discovery.rs   # Ping sweep ile ag cihaz kesfi
+│   ├── os_detect.rs   # TTL analizi ile OS tespiti
+│   ├── report.rs      # Guvenlik puanlama + Markdown rapor
+│   └── web.rs         # Axum REST API + coklu hedef endpoint
+├── static/
+│   └── index.html     # Web panel (5 tema, TR/EN dil)
+└── Cargo.toml                                                         ---
 
 ## API Endpointleri
 
-POST /api/scan       - Tek hedef port tarama
-POST /api/multiscan  - Coklu hedef port tarama
-POST /api/network    - Ag cihaz kesfi
-GET  /api/health     - Sunucu durumu
+| Metod | Endpoint | Aciklama |
+|-------|----------|----------|
+| POST | `/api/scan` | Tek hedef port tarama |
+| POST | `/api/multiscan` | Coklu hedef tarama |
+| POST | `/api/network` | Ag cihaz kesfi |
+| GET | `/api/health` | Sunucu durumu |
 
 ---
 
 ## Guvenlik Puanlama
 
-Baslangic puani: 100
-Her acik port: -5 puan
-Riskli port (21,23,445,3389,6379): -15 puan
+Baslangic: **100 puan**
 
-A: 90-100 Cok guvenli
-B: 75-89  Guvenli
-C: 60-74  Orta risk
-D: 45-59  Riskli
-E: 30-44  Tehlikeli
-F: 0-29   Cok tehlikeli
+| Kural | Puan |
+|-------|------|
+| Her acik port | -5 |
+| Riskli port (21, 23, 445, 3389, 6379) | -15 |
+
+| Not | Aralik | Anlam |
+|-----|--------|-------|
+| A | 90-100 | Cok guvenli |
+| B | 75-89 | Guvenli |
+| C | 60-74 | Orta risk |
+| D | 45-59 | Riskli |
+| E | 30-44 | Tehlikeli |
+| F | 0-29 | Cok tehlikeli |
 
 ---
 
 ## Testler
-
+```bash
 cargo test
+# 12 test, hepsi gecer
+```
 
-12 unit test, hepsi basariyla gecer:
-- test_get_service_name
-- test_parse_version_ssh
-- test_parse_version_redis
-- test_parse_version_empty
-- test_port_status_display
-- test_port_status_filtered_on_timeout
-- test_scan_port_closed
-- test_banner_empty_on_closed
-- test_security_score_a
-- test_security_score_f
-- test_security_score_riskli_port
-- test_generate_markdown
+| Test | Aciklama |
+|------|----------|
+| `test_get_service_name` | Servis adi eslesmesi |
+| `test_parse_version_ssh` | SSH versiyon parse |
+| `test_parse_version_redis` | Redis banner tespiti |
+| `test_parse_version_empty` | Bos banner isleme |
+| `test_port_status_display` | Port durum gosterimi |
+| `test_port_status_filtered_on_timeout` | Filtreli port tespiti |
+| `test_scan_port_closed` | Kapali port tarama |
+| `test_banner_empty_on_closed` | Kapali portta bos banner |
+| `test_security_score_a` | Bos liste A notu almali |
+| `test_security_score_f` | Cok fazla port F notu almali |
+| `test_security_score_riskli_port` | Riskli portlar puani dusurmeli |
+| `test_generate_markdown` | Rapor dogru bilgi icermeli |
 
 ---
 
 ## Ogrendiklerim
 
-Async programlama: Tokio ile tokio::spawn kullanarak her porta ayri gorev actim.
-Paralel tarama sayesinde yuzlerce portu ayni anda tarayabildim.
+**Async/paralel programlama** — `tokio::spawn` ile her porta ayri gorev. Yuzlerce portu ayni anda taradim.
 
-TCP baglanti mantigi ve port durumlari: Baglanti kurulursa open, reddedilirse closed,
-zaman asimi olursa filtered (firewall). Bu uclu sistemi sifirdan implement ettim.
+**TCP port durumlari** — Connect tarama: kurulursa `open`, reddedilirse `closed`, zaman asiminda `filtered`.
 
-Banner grabbing: Porta TCP baglantisi acip ilk yaniti okuyarak servis bilgisi aldim.
-SSH, HTTP, FTP, MySQL gibi servislerin banner formatlarini ogrendim.
+**Banner grabbing** — TCP baglantisi acip ilk yaniti okuyarak servis ve versiyon bilgisi cikardim.
 
-Servis imzasi eslestirme: Banner metninden versiyon numarasi cikardim.
-SSH-2.0-OpenSSH_8.4p1 gibi bannerlardan OpenSSH 8.4p1 versiyonunu tespit ettim.
+**Servis imzasi eslestirme** — `SSH-2.0-OpenSSH_8.4p1` gibi bannerlardan `OpenSSH 8.4p1` parse ettim.
 
-TTL analizi ile OS tespiti: Windows TTL=128, Linux TTL=64, routerlar daha dusuk deger gonderir.
+**TTL analizi** — Windows=128, Linux=64, Router<48. Ping ciktisini parse ederek OS tahmini yaptim.
 
-CLI gelistirme: Clap kutuphanesi ile --range, --format, --timeout, --all parametrelerini implement ettim.
+**CLI gelistirme** — Clap ile `--range`, `--format`, `--timeout`, `--all` parametreleri implement ettim.
 
-Axum web framework: REST API, JSON isleme, coklu hedef endpoint ve statik dosya sunumu.
+**Axum** — REST API, JSON isleme, coklu endpoint ve statik dosya sunumu.
 
-Rust modul sistemi ve ownership: Her sorumlulugu ayri module bolduk.
-
-Guvenlik dusuncesi: Riskli portlarin (21/FTP, 23/Telnet, 445/SMB, 3389/RDP, 6379/Redis)
-neden tehlikeli oldugunu ogrendim ve puanlama sistemine dahil ettim.
+**Guvenlik** — FTP/21, Telnet/23, SMB/445, RDP/3389, Redis/6379 portlarinin neden riskli oldugunu ogrendim.
 
 ---
 
 ## Referanslar
 
-- Nmap kaynak kodu - port tarama mimarisi icin
-- RFC 793 (TCP) - TCP baglanti protokolu
-- Nmap service-probes - servis imzasi eslestirme icin
+- [Nmap](https://nmap.org) — Port tarama mimarisi referansi
+- [RFC 793](https://tools.ietf.org/html/rfc793) — TCP protokolu
+- [Nmap service-probes](https://svn.nmap.org/nmap/nmap-service-probes) — Servis imzasi referansi
 
 ---
 
 ## Lisans
 
 MIT
-
