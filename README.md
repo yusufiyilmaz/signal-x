@@ -9,7 +9,7 @@ servis imzasi eslestirme, OS tespiti, guvenlik puanlama ve web paneli sunar.
 
 **Gereksinimler:** Rust 1.70+, Cargo
 
-Tarayicide ac: http://127.0.0.1:3000
+Tarayicide ac: http://127.0.0.1:3000 (cargo run calistirildiktan sonra)
 
 ---
 
@@ -155,3 +155,4 @@ neden tehlikeli oldugunu ogrendim ve puanlama sistemine dahil ettim.
 ## Lisans
 
 MIT
+
