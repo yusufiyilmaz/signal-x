@@ -14,10 +14,15 @@
         .theme-danger  { --neon:#ff3060;--neon2:#ff6000;--neon3:#ffcc00;--bg:#0f0003;--bg2:#1a0005;--bg3:#280008;--border:#3a000a;--text:#ffc0c0;--dim:#5a1a1a; }
         .theme-cyber   { --neon:#00cfff;--neon2:#0080ff;--neon3:#00ffee;--bg:#00080f;--bg2:#000f1a;--bg3:#001528;--border:#002040;--text:#c0e0ff;--dim:#1a3a5a; }
         .theme-gold    { --neon:#ffd700;--neon2:#ff8c00;--neon3:#fffacd;--bg:#0a0800;--bg2:#150f00;--bg3:#201500;--border:#3a2800;--text:#fff0c0;--dim:#5a4a00; }
+        .light-mode {
+            --neon:#6600cc;--neon2:#cc0077;--neon3:#0077cc;
+            --bg:#f0f0f8;--bg2:#ffffff;--bg3:#e8e0f8;
+            --border:#c0a0e0;--text:#1a0a2e;--dim:#8060a0;
+        }
 
         *{margin:0;padding:0;box-sizing:border-box;}
         body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;min-height:100vh;transition:all 0.3s;overflow-x:hidden;}
-        body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:9999;}
+        body:not(.light-mode)::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:9999;}
 
         @keyframes glitch{0%,100%{text-shadow:0 0 20px var(--neon);}20%{text-shadow:-2px 0 #ff2d9b,2px 0 #00f0ff,0 0 20px var(--neon);}40%{text-shadow:2px 0 #ff2d9b,-2px 0 #00f0ff,0 0 20px var(--neon);}60%{text-shadow:0 0 20px var(--neon);}}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
@@ -26,23 +31,23 @@
         @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
         @keyframes countUp{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
         @keyframes borderGlow{0%,100%{box-shadow:0 0 5px var(--neon)}50%{box-shadow:0 0 20px var(--neon),0 0 40px var(--neon2)}}
-        @keyframes welcomePulse{0%,100%{opacity:0.6}50%{opacity:1}}
-        @keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes modalIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+        @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 
         /* HEADER */
-        .header{background:var(--bg2);border-bottom:2px solid var(--neon);padding:10px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 0 40px rgba(0,0,0,0.8);}
+        .header{background:var(--bg2);border-bottom:2px solid var(--neon);padding:10px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 0 40px rgba(0,0,0,0.5);}
         .logo-wrap{display:flex;align-items:center;gap:14px;}
         .logo-icon{width:36px;height:36px;border:2px solid var(--neon);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;animation:borderGlow 3s infinite;}
         .logo-text{color:var(--neon);font-size:20px;font-weight:bold;letter-spacing:4px;animation:glitch 4s infinite;}
         .logo-sub{color:var(--dim);font-size:9px;margin-top:2px;letter-spacing:2px;}
-        .header-center{display:flex;flex-direction:column;align-items:center;gap:2px;}
+        .header-center{display:flex;flex-direction:column;align-items:center;}
         .header-clock{color:var(--neon);font-size:18px;font-weight:bold;letter-spacing:3px;text-shadow:0 0 10px var(--neon);}
         .header-date{color:var(--dim);font-size:9px;letter-spacing:2px;}
-        .header-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+        .header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
         .status-pill{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--neon);padding:5px 14px;border-radius:20px;}
         .status-dot{width:8px;height:8px;background:var(--neon);border-radius:50%;box-shadow:0 0 10px var(--neon);animation:pulse 2s infinite;}
         .status-text{color:var(--neon);font-size:11px;letter-spacing:1px;}
-        .theme-switcher{display:flex;gap:7px;align-items:center;}
+        .theme-switcher{display:flex;gap:6px;align-items:center;}
         .theme-btn{width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all 0.2s;}
         .theme-btn:hover{transform:scale(1.3);}
         .theme-btn.active{border-color:white;box-shadow:0 0 10px white;}
@@ -52,6 +57,8 @@
         .t-blue{background:linear-gradient(135deg,#00cfff,#0080ff);}
         .t-gold{background:linear-gradient(135deg,#ffd700,#ff8c00);}
         .theme-label{color:var(--dim);font-size:10px;letter-spacing:1px;}
+        .icon-btn{background:transparent;border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:20px;cursor:pointer;font-family:monospace;font-size:12px;transition:all 0.2s;}
+        .icon-btn:hover{border-color:var(--neon);color:var(--neon);}
         .lang-btn{background:transparent;border:1px solid var(--neon);color:var(--neon);padding:5px 14px;border-radius:20px;cursor:pointer;font-family:monospace;font-size:11px;letter-spacing:1px;transition:all 0.2s;}
         .lang-btn:hover{background:rgba(255,255,255,0.05);}
 
@@ -59,16 +66,17 @@
         .layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 62px);}
 
         /* SIDEBAR */
-        .sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:20px 0;display:flex;flex-direction:column;gap:0;}
-        .sidebar-section{padding:0 14px;margin-bottom:24px;}
+        .sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:20px 0;display:flex;flex-direction:column;}
+        .sidebar-section{padding:0 14px;margin-bottom:22px;}
         .sidebar-title{color:var(--dim);font-size:9px;letter-spacing:3px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
         .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--dim);font-size:11px;letter-spacing:1px;margin-bottom:3px;transition:all 0.2s;border:1px solid transparent;}
         .nav-item:hover{color:var(--neon);border-color:var(--border);background:var(--bg3);}
         .nav-item.active{color:var(--neon);background:var(--bg3);border-color:var(--neon);}
         .nav-icon{font-size:13px;width:16px;}
+        .nav-badge{background:var(--neon);color:#000;font-size:9px;font-weight:bold;padding:1px 6px;border-radius:10px;margin-left:auto;}
 
         /* QUICK PORTS */
-        .quick-ports{display:flex;flex-direction:column;gap:5px;}
+        .quick-ports{display:flex;flex-direction:column;gap:4px;}
         .quick-port-btn{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:7px 10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all 0.2s;font-family:monospace;}
         .quick-port-btn:hover{border-color:var(--neon);background:var(--bg);}
         .qp-port{color:var(--neon);font-size:12px;font-weight:bold;}
@@ -78,7 +86,7 @@
         /* MINI STATS */
         .mini-stat{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:11px 13px;margin-bottom:7px;}
         .mini-stat-label{color:var(--dim);font-size:9px;letter-spacing:2px;margin-bottom:5px;}
-        .mini-stat-value{color:var(--neon);font-size:17px;font-weight:bold;text-shadow:0 0 8px var(--neon);}
+        .mini-stat-value{color:var(--neon);font-size:17px;font-weight:bold;}
         .mini-bar{height:3px;background:var(--border);border-radius:2px;margin-top:7px;overflow:hidden;}
         .mini-bar-fill{height:100%;background:linear-gradient(90deg,var(--neon),var(--neon2));border-radius:2px;transition:width 1s ease;}
 
@@ -87,22 +95,28 @@
         .panel{display:none;animation:fadeIn 0.3s ease;}
         .panel.active{display:block;}
 
-        /* WELCOME SCREEN */
-        .welcome{display:flex;flex-direction:column;gap:16px;margin-bottom:24px;}
-        .welcome-banner{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px 32px;position:relative;overflow:hidden;}
+        /* WELCOME */
+        .welcome{margin-bottom:20px;}
+        .welcome-banner{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:26px 30px;position:relative;overflow:hidden;margin-bottom:14px;}
         .welcome-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),var(--neon2),transparent);}
-        .welcome-banner::after{content:'';position:absolute;bottom:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(191,95,255,0.05),transparent);pointer-events:none;}
         .welcome-title{color:var(--neon);font-size:13px;letter-spacing:3px;margin-bottom:8px;}
         .welcome-desc{color:var(--dim);font-size:11px;letter-spacing:1px;line-height:1.8;}
         .welcome-desc span{color:var(--text);}
-        .welcome-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-        .welcome-stat{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
-        .welcome-stat-val{color:var(--neon);font-size:20px;font-weight:bold;margin-bottom:4px;text-shadow:0 0 10px var(--neon);}
+        .welcome-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;}
+        .welcome-stat{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;}
+        .welcome-stat-val{color:var(--neon);font-size:20px;font-weight:bold;margin-bottom:4px;}
         .welcome-stat-label{color:var(--dim);font-size:9px;letter-spacing:2px;}
         .welcome-tips{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;}
         .welcome-tips-title{color:var(--neon2);font-size:10px;letter-spacing:2px;margin-bottom:10px;}
-        .tip-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;font-size:11px;color:var(--dim);letter-spacing:0.5px;line-height:1.6;}
+        .tip-item{display:flex;gap:10px;margin-bottom:7px;font-size:11px;color:var(--dim);letter-spacing:0.5px;line-height:1.6;}
         .tip-icon{color:var(--neon);flex-shrink:0;}
+
+        /* PING TEST */
+        .ping-row{display:flex;align-items:center;gap:8px;margin-top:12px;}
+        .ping-result{font-size:11px;letter-spacing:1px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);}
+        .ping-ok{color:#00ff41;border-color:#00ff41;}
+        .ping-fail{color:#ff3060;border-color:#ff3060;}
+        .ping-wait{color:var(--dim);}
 
         /* CARDS */
         .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:18px;position:relative;overflow:hidden;transition:border-color 0.3s;}
@@ -117,19 +131,21 @@
         .input-group.sm{max-width:130px;}
         .input-label-text{color:var(--dim);font-size:9px;letter-spacing:2px;}
         input[type=text],input[type=number]{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-family:monospace;font-size:13px;transition:all 0.2s;}
-        input:focus{outline:none;border-color:var(--neon);box-shadow:0 0 12px rgba(0,0,0,0.4);}
+        input:focus{outline:none;border-color:var(--neon);box-shadow:0 0 12px rgba(0,0,0,0.3);}
         input::placeholder{color:var(--dim);}
 
         /* BUTTONS */
-        .btn{padding:10px 24px;border-radius:8px;font-weight:bold;cursor:pointer;font-family:monospace;font-size:12px;border:none;transition:all 0.2s;letter-spacing:1px;white-space:nowrap;}
-        .btn-primary{background:linear-gradient(135deg,var(--neon),var(--neon2));color:#000;box-shadow:0 4px 20px rgba(0,0,0,0.4);}
-        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(0,0,0,0.5);}
+        .btn{padding:10px 22px;border-radius:8px;font-weight:bold;cursor:pointer;font-family:monospace;font-size:12px;border:none;transition:all 0.2s;letter-spacing:1px;white-space:nowrap;}
+        .btn-primary{background:linear-gradient(135deg,var(--neon),var(--neon2));color:#000;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(0,0,0,0.4);}
         .btn-primary:disabled{background:var(--border);color:var(--dim);box-shadow:none;cursor:not-allowed;transform:none;}
         .btn-secondary{background:transparent;color:var(--neon);border:1px solid var(--neon);}
         .btn-secondary:hover{background:rgba(255,255,255,0.04);}
         .btn-cyan{background:transparent;color:var(--neon3);border:1px solid var(--neon3);}
         .btn-cyan:hover{background:rgba(255,255,255,0.04);}
         .btn-sm{padding:7px 14px;font-size:11px;}
+        .btn-ghost{background:transparent;color:var(--dim);border:1px solid var(--border);font-size:11px;padding:6px 12px;}
+        .btn-ghost:hover{border-color:var(--neon);color:var(--neon);}
 
         /* PROGRESS */
         .progress-wrap{margin-top:18px;display:none;}
@@ -141,17 +157,17 @@
         .progress-sub{color:var(--dim);font-size:10px;margin-top:6px;letter-spacing:1px;}
 
         /* STATS GRID */
-        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px;}
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px;}
         .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;overflow:hidden;transition:all 0.3s;}
         .stat-card:hover{border-color:var(--neon);transform:translateY(-2px);}
         .stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--neon),var(--neon2));}
         .stat-icon{font-size:20px;margin-bottom:8px;}
         .stat-label{color:var(--dim);font-size:9px;letter-spacing:2px;margin-bottom:7px;}
-        .stat-value{font-size:21px;font-weight:bold;color:var(--neon);text-shadow:0 0 12px var(--neon);animation:countUp 0.5s ease;}
-        .stat-value.red{color:#ff3060;text-shadow:0 0 12px #ff3060;}
-        .stat-value.neon3{color:var(--neon3);text-shadow:0 0 12px var(--neon3);}
+        .stat-value{font-size:21px;font-weight:bold;color:var(--neon);animation:countUp 0.5s ease;}
+        .stat-value.red{color:#ff3060;}
+        .stat-value.neon3{color:var(--neon3);}
 
-        /* SCORE */
+        /* SCORE BADGES */
         .score-badge{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:8px;font-weight:bold;font-size:20px;}
         .score-A{background:rgba(0,240,255,0.1);color:#00f0ff;border:1px solid #00f0ff;box-shadow:0 0 12px rgba(0,240,255,0.3);}
         .score-B{background:rgba(0,255,65,0.1);color:#00ff41;border:1px solid #00ff41;}
@@ -165,7 +181,7 @@
         .scan-meta-item span{color:var(--neon);}
 
         /* RISK METER */
-        .risk-meter{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:16px;}
+        .risk-meter{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:16px;}
         .risk-meter-label{color:var(--dim);font-size:9px;letter-spacing:2px;min-width:80px;}
         .risk-bar-bg{flex:1;height:10px;background:var(--border);border-radius:5px;overflow:hidden;}
         .risk-bar-fill{height:100%;border-radius:5px;transition:width 1.2s ease;background:linear-gradient(90deg,#00ff41,#ffc800,#ff6400,#ff3060);}
@@ -178,21 +194,47 @@
         td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;}
         tr:last-child td{border-bottom:none;}
         tr:hover td{background:rgba(255,255,255,0.02);}
+        .clickable-row{cursor:pointer;}
+        .clickable-row:hover td{background:rgba(191,95,255,0.05);}
         .badge{padding:3px 10px;border-radius:4px;font-size:10px;font-weight:bold;letter-spacing:1px;}
         .badge-open{background:rgba(0,240,255,0.1);color:#00f0ff;border:1px solid #00f0ff;}
-        .badge-alive{background:rgba(0,0,0,0.2);color:var(--neon);border:1px solid var(--neon);}
+        .badge-alive{background:rgba(0,0,0,0.1);color:var(--neon);border:1px solid var(--neon);}
         .badge-risk{background:rgba(255,48,96,0.1);color:#ff3060;border:1px solid #ff3060;}
         .badge-warn{background:rgba(255,100,0,0.1);color:#ff6400;border:1px solid #ff6400;}
         .badge-low{background:rgba(0,240,255,0.1);color:#00f0ff;border:1px solid #00f0ff;}
 
         /* TERMINAL */
-        .terminal{background:#000;border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:12px;line-height:2;color:#00ff41;max-height:240px;overflow-y:auto;}
+        .terminal{background:#000;border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:12px;line-height:2;max-height:220px;overflow-y:auto;}
         .terminal-header{display:flex;gap:6px;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
         .t-dot{width:11px;height:11px;border-radius:50%;}
-        .t-red{background:#ff3060;} .t-yellow{background:#ffc800;} .t-green{background:#00ff41;}
-        .terminal-title{color:var(--dim);font-size:10px;letter-spacing:2px;flex:1;text-align:center;}
+        .t-red{background:#ff3060;}.t-yellow{background:#ffc800;}.t-green{background:#00ff41;}
+        .terminal-title{color:#555;font-size:10px;letter-spacing:2px;flex:1;text-align:center;}
         .t-line{animation:fadeIn 0.2s ease;}
-        .t-cursor{display:inline-block;animation:blink 1s infinite;}
+        .t-cursor{display:inline-block;animation:blink 1s infinite;color:#00ff41;}
+
+        /* HISTORY */
+        .history-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.2s;animation:slideDown 0.3s ease;}
+        .history-item:hover{border-color:var(--neon);background:var(--bg);}
+        .history-left{display:flex;flex-direction:column;gap:4px;}
+        .history-target{color:var(--neon);font-size:13px;font-weight:bold;}
+        .history-meta{color:var(--dim);font-size:10px;letter-spacing:1px;}
+        .history-right{display:flex;align-items:center;gap:10px;}
+        .history-empty{text-align:center;padding:30px;color:var(--dim);font-size:11px;letter-spacing:2px;}
+
+        /* MODAL */
+        .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+        .modal-overlay.open{display:flex;}
+        .modal{background:var(--bg2);border:1px solid var(--neon);border-radius:14px;padding:28px;max-width:480px;width:90%;position:relative;animation:modalIn 0.25s ease;}
+        .modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),var(--neon2),transparent);border-radius:14px 14px 0 0;}
+        .modal-close{position:absolute;top:16px;right:16px;background:transparent;border:1px solid var(--border);color:var(--dim);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+        .modal-close:hover{border-color:var(--neon);color:var(--neon);}
+        .modal-title{color:var(--neon);font-size:14px;letter-spacing:2px;margin-bottom:20px;}
+        .modal-port-num{font-size:36px;font-weight:bold;color:var(--neon);text-shadow:0 0 20px var(--neon);margin-bottom:6px;}
+        .modal-service{color:var(--neon2);font-size:14px;letter-spacing:2px;margin-bottom:20px;}
+        .modal-detail-row{display:flex;gap:10px;margin-bottom:10px;font-size:12px;}
+        .modal-detail-label{color:var(--dim);letter-spacing:1px;min-width:100px;}
+        .modal-detail-value{color:var(--text);}
+        .modal-desc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:16px;font-size:12px;color:var(--dim);line-height:1.8;letter-spacing:0.5px;}
 
         /* REPORT */
         pre{background:var(--bg);border:1px solid var(--border);padding:20px;border-radius:10px;overflow-x:auto;font-size:12px;line-height:1.9;color:var(--text);}
@@ -207,6 +249,20 @@
     </style>
 </head>
 <body>
+
+<!-- PORT DETAIL MODAL -->
+<div class="modal-overlay" id="portModal" onclick="closeModal(event)">
+    <div class="modal">
+        <button class="modal-close" onclick="document.getElementById('portModal').classList.remove('open')">✕</button>
+        <div class="modal-title" id="modalTitle">PORT DETAYI</div>
+        <div class="modal-port-num" id="modalPortNum">—</div>
+        <div class="modal-service" id="modalService">—</div>
+        <div class="modal-detail-row"><span class="modal-detail-label" id="mlRisk">RISK SEVİYESİ</span><span class="modal-detail-value" id="modalRisk">—</span></div>
+        <div class="modal-detail-row"><span class="modal-detail-label" id="mlProto">PROTOKOL</span><span class="modal-detail-value">TCP</span></div>
+        <div class="modal-detail-row"><span class="modal-detail-label" id="mlStatus">DURUM</span><span class="modal-detail-value" style="color:#00f0ff" id="modalStatus">ACIK</span></div>
+        <div class="modal-desc" id="modalDesc">—</div>
+    </div>
+</div>
 
 <!-- HEADER -->
 <div class="header">
@@ -230,6 +286,7 @@
             <div class="theme-btn t-blue" onclick="setTheme('theme-cyber',this)" title="Cyber"></div>
             <div class="theme-btn t-gold" onclick="setTheme('theme-gold',this)" title="Gold"></div>
         </div>
+        <button class="icon-btn" id="lightModeBtn" onclick="toggleLight()" title="Karanlik/Aydinlik mod">☀</button>
         <button class="lang-btn" id="langBtn" onclick="toggleLang()">EN</button>
         <div class="status-pill">
             <div class="status-dot"></div>
@@ -248,6 +305,10 @@
             </div>
             <div class="nav-item" onclick="switchTab('network',this)">
                 <span class="nav-icon">◈</span><span id="navNetText">AG KESFI</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('history',this)">
+                <span class="nav-icon">◷</span><span id="navHistText">GECMIS</span>
+                <span class="nav-badge" id="historyBadge">0</span>
             </div>
             <div class="nav-item" onclick="switchTab('report',this)">
                 <span class="nav-icon">▦</span><span id="navRepText">RAPOR</span>
@@ -269,7 +330,6 @@
             <div class="mini-stat">
                 <div class="mini-stat-label" id="sideRiskLabel">RISK NOTU</div>
                 <div class="mini-stat-value" id="sideRiskVal">—</div>
-                <div class="mini-bar"><div class="mini-bar-fill" id="sideRiskBar" style="width:0%"></div></div>
             </div>
             <div class="mini-stat">
                 <div class="mini-stat-label" id="sideSureLabel">SURE</div>
@@ -291,42 +351,25 @@
 
         <!-- PORT TARAMA -->
         <div id="port" class="panel active">
-
-            <!-- WELCOME SCREEN -->
             <div id="welcomeScreen" class="welcome">
                 <div class="welcome-banner">
                     <div class="welcome-title" id="welcomeTitle">⚡ SIGNAL-X HAZIR</div>
-                    <div class="welcome-desc" id="welcomeDesc">
-                        Hedef IP adresini girin, port araligini belirleyin ve taramayi baslatin.<br>
-                        <span>Acik portlar, servis tespiti, OS tahmini ve guvenlik puani</span> otomatik hesaplanir.
-                    </div>
-                    <div style="margin-top:18px;">
-                        <div class="welcome-stats">
-                            <div class="welcome-stat">
-                                <div class="welcome-stat-val">16</div>
-                                <div class="welcome-stat-label" id="wStatService">SERVIS TANIMI</div>
-                            </div>
-                            <div class="welcome-stat">
-                                <div class="welcome-stat-val">5</div>
-                                <div class="welcome-stat-label" id="wStatRisk">RISKLI PORT</div>
-                            </div>
-                            <div class="welcome-stat">
-                                <div class="welcome-stat-val">A-F</div>
-                                <div class="welcome-stat-label" id="wStatScore">GUVENLIK NOTU</div>
-                            </div>
-                        </div>
+                    <div class="welcome-desc" id="welcomeDesc">Hedef IP adresini girin, port araligini belirleyin ve taramayi baslatin.<br><span>Acik portlar, servis tespiti, OS tahmini ve guvenlik puani</span> otomatik hesaplanir.</div>
+                    <div class="welcome-stats">
+                        <div class="welcome-stat"><div class="welcome-stat-val">16</div><div class="welcome-stat-label" id="wStatService">SERVIS TANIMI</div></div>
+                        <div class="welcome-stat"><div class="welcome-stat-val">5</div><div class="welcome-stat-label" id="wStatRisk">RISKLI PORT</div></div>
+                        <div class="welcome-stat"><div class="welcome-stat-val">A-F</div><div class="welcome-stat-label" id="wStatScore">GUVENLIK NOTU</div></div>
                     </div>
                 </div>
                 <div class="welcome-tips">
                     <div class="welcome-tips-title" id="tipsTitle">// KULLANIM IPUCLARI</div>
                     <div class="tip-item"><span class="tip-icon">▸</span><span id="tip1">Hizli erisim butonlariyla yaygin portlari tek tikla doldurabilirsiniz.</span></div>
                     <div class="tip-item"><span class="tip-icon">▸</span><span id="tip2">Port araligi kucuk tutulursa tarama daha hizli tamamlanir (ornek: 1-1024).</span></div>
-                    <div class="tip-item"><span class="tip-icon">▸</span><span id="tip3">21, 23, 445, 3389, 6379 portlari yuksek riskli kabul edilir ve puani dusurebilir.</span></div>
-                    <div class="tip-item"><span class="tip-icon">▸</span><span id="tip4">Tarama sonrasi Rapor sekmesinden MD veya JSON formatinda export edebilirsiniz.</span></div>
+                    <div class="tip-item"><span class="tip-icon">▸</span><span id="tip3">Port satirina tiklayarak detayli risk bilgisi gorebilirsiniz.</span></div>
+                    <div class="tip-item"><span class="tip-icon">▸</span><span id="tip4">Gecmis sekmesinden onceki taramalara geri donebilirsiniz.</span></div>
                 </div>
             </div>
 
-            <!-- SCAN FORM -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">⬡ <span id="portCardTitle">PORT TARAMA MODULU</span></div>
@@ -334,7 +377,7 @@
                 <div class="form-row">
                     <div class="input-group">
                         <div class="input-label-text" id="labelTargetIP">HEDEF IP</div>
-                        <input type="text" id="target" placeholder="192.168.1.1" />
+                        <input type="text" id="target" placeholder="192.168.1.1" oninput="resetPing()" />
                     </div>
                     <div class="input-group sm">
                         <div class="input-label-text" id="labelStart">BASLANGIC PORT</div>
@@ -346,6 +389,10 @@
                     </div>
                     <button class="btn btn-primary" id="scanBtn" onclick="startScan()">▶ TARA</button>
                 </div>
+                <div class="ping-row">
+                    <button class="btn btn-ghost btn-sm" id="pingBtn" onclick="doPingTest()">⬡ <span id="pingBtnText">PING TEST</span></button>
+                    <span class="ping-result ping-wait" id="pingResult" style="display:none"></span>
+                </div>
                 <div class="progress-wrap" id="progressWrap">
                     <div class="progress-header">
                         <span class="progress-label" id="progressText">// HEDEF TARANIYOR...</span>
@@ -356,71 +403,36 @@
                 </div>
             </div>
 
-            <!-- RESULTS -->
             <div id="scanResults" style="display:none">
                 <div class="scan-meta" id="scanMeta"></div>
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">🖥</div>
-                        <div class="stat-label" id="labelOS">ISLETIM SISTEMI</div>
-                        <div class="stat-value" id="statOS" style="font-size:13px">—</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🛡</div>
-                        <div class="stat-label" id="labelScore">GUVENLIK NOTU</div>
-                        <div class="stat-value" id="statScore">—</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🔓</div>
-                        <div class="stat-label" id="labelOpen">ACIK PORT</div>
-                        <div class="stat-value neon3" id="statOpen">—</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">⚠</div>
-                        <div class="stat-label" id="labelRisk">YUKSEK RISK</div>
-                        <div class="stat-value red" id="statRisk">—</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">⏱</div>
-                        <div class="stat-label" id="labelTime">TARAMA SURESI</div>
-                        <div class="stat-value" id="statTime">—</div>
-                    </div>
+                    <div class="stat-card"><div class="stat-icon">🖥</div><div class="stat-label" id="labelOS">ISLETIM SISTEMI</div><div class="stat-value" id="statOS" style="font-size:13px">—</div></div>
+                    <div class="stat-card"><div class="stat-icon">🛡</div><div class="stat-label" id="labelScore">GUVENLIK NOTU</div><div class="stat-value" id="statScore">—</div></div>
+                    <div class="stat-card"><div class="stat-icon">🔓</div><div class="stat-label" id="labelOpen">ACIK PORT</div><div class="stat-value neon3" id="statOpen">—</div></div>
+                    <div class="stat-card"><div class="stat-icon">⚠</div><div class="stat-label" id="labelRisk">YUKSEK RISK</div><div class="stat-value red" id="statRisk">—</div></div>
+                    <div class="stat-card"><div class="stat-icon">⏱</div><div class="stat-label" id="labelTime">TARAMA SURESI</div><div class="stat-value" id="statTime">—</div></div>
                 </div>
-
                 <div class="risk-meter">
                     <div class="risk-meter-label" id="riskMeterTitle">RISK GOSTERGESI</div>
-                    <div class="risk-bar-bg">
-                        <div class="risk-bar-fill" id="riskBarFill" style="width:0%"></div>
-                    </div>
+                    <div class="risk-bar-bg"><div class="risk-bar-fill" id="riskBarFill" style="width:0%"></div></div>
                     <div class="risk-score-label" id="riskLabel">—</div>
                 </div>
-
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">📋 <span id="portListTitle">ACIK PORT LISTESI</span></div>
+                        <span style="color:var(--dim);font-size:10px;letter-spacing:1px" id="clickHint">↗ DETAY ICIN TIKLA</span>
                     </div>
                     <div class="table-wrap">
-                        <table>
-                            <thead><tr>
-                                <th id="thPort">PORT</th>
-                                <th id="thService">SERVIS</th>
-                                <th id="thRisk">RISK</th>
-                                <th id="thStatus">DURUM</th>
-                            </tr></thead>
-                            <tbody id="portTable"></tbody>
-                        </table>
+                        <table><thead><tr>
+                            <th id="thPort">PORT</th><th id="thService">SERVIS</th><th id="thRisk">RISK</th><th id="thStatus">DURUM</th>
+                        </tr></thead><tbody id="portTable"></tbody></table>
                     </div>
                 </div>
-
                 <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">⬛ <span id="terminalTitle">TARAMA KAYITLARI</span></div>
-                    </div>
+                    <div class="card-header"><div class="card-title">⬛ <span id="terminalTitle">TARAMA KAYITLARI</span></div></div>
                     <div class="terminal">
                         <div class="terminal-header">
-                            <div class="t-dot t-red"></div>
-                            <div class="t-dot t-yellow"></div>
-                            <div class="t-dot t-green"></div>
+                            <div class="t-dot t-red"></div><div class="t-dot t-yellow"></div><div class="t-dot t-green"></div>
                             <div class="terminal-title">signal-x terminal</div>
                         </div>
                         <div id="terminalLog"></div>
@@ -433,56 +445,42 @@
         <!-- AG KESFI -->
         <div id="network" class="panel">
             <div class="card">
-                <div class="card-header">
-                    <div class="card-title">◈ <span id="netCardTitle">AG KESFI MODULU</span></div>
-                </div>
+                <div class="card-header"><div class="card-title">◈ <span id="netCardTitle">AG KESFI MODULU</span></div></div>
                 <div class="form-row">
-                    <div class="input-group">
-                        <div class="input-label-text" id="labelBaseIP">AG ADRESI</div>
-                        <input type="text" id="baseIP" placeholder="192.168.1" />
-                    </div>
-                    <div class="input-group sm">
-                        <div class="input-label-text" id="labelStartIP">BASLANGIC</div>
-                        <input type="number" id="startIP" value="1" />
-                    </div>
-                    <div class="input-group sm">
-                        <div class="input-label-text" id="labelEndIP">BITIS</div>
-                        <input type="number" id="endIP" value="254" />
-                    </div>
+                    <div class="input-group"><div class="input-label-text" id="labelBaseIP">AG ADRESI</div><input type="text" id="baseIP" placeholder="192.168.1" /></div>
+                    <div class="input-group sm"><div class="input-label-text" id="labelStartIP">BASLANGIC</div><input type="number" id="startIP" value="1" /></div>
+                    <div class="input-group sm"><div class="input-label-text" id="labelEndIP">BITIS</div><input type="number" id="endIP" value="254" /></div>
                     <button class="btn btn-primary" id="netBtn" onclick="startNetScan()">▶ TARA</button>
                 </div>
             </div>
             <div id="netResults" style="display:none">
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">🖧</div>
-                        <div class="stat-label" id="labelDevices">BULUNAN CIHAZ</div>
-                        <div class="stat-value" id="statDevices">0</div>
-                    </div>
+                    <div class="stat-card"><div class="stat-icon">🖧</div><div class="stat-label" id="labelDevices">BULUNAN CIHAZ</div><div class="stat-value" id="statDevices">0</div></div>
                 </div>
                 <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">◈ <span id="netListTitle">AKTIF CIHAZLAR</span></div>
-                    </div>
+                    <div class="card-header"><div class="card-title">◈ <span id="netListTitle">AKTIF CIHAZLAR</span></div></div>
                     <div class="table-wrap">
-                        <table>
-                            <thead><tr>
-                                <th id="thIP">IP ADRESI</th>
-                                <th id="thDevStatus">DURUM</th>
-                            </tr></thead>
-                            <tbody id="netTable"></tbody>
-                        </table>
+                        <table><thead><tr><th id="thIP">IP ADRESI</th><th id="thDevStatus">DURUM</th></tr></thead><tbody id="netTable"></tbody></table>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- GECMIS -->
+        <div id="history" class="panel">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">◷ <span id="histCardTitle">TARAMA GECMISI</span></div>
+                    <button class="btn btn-ghost btn-sm" onclick="clearHistory()" id="clearHistBtn">✕ TEMIZLE</button>
+                </div>
+                <div id="historyList"><div class="history-empty" id="historyEmpty">// HENUZ TARAMA YAPILMADI</div></div>
             </div>
         </div>
 
         <!-- RAPOR -->
         <div id="report" class="panel">
             <div class="card">
-                <div class="card-header">
-                    <div class="card-title">▦ <span id="reportCardTitle">GUVENLIK RAPORU</span></div>
-                </div>
+                <div class="card-header"><div class="card-title">▦ <span id="reportCardTitle">GUVENLIK RAPORU</span></div></div>
                 <pre id="reportContent">// HENUZ TARAMA YAPILMADI
 // ONCE PORT TARAMA SEKMESINDEN BIR TARAMA BASLATIN</pre>
                 <div class="report-actions">
@@ -498,129 +496,126 @@
 
 <script>
 const RISK_PORTS=[21,23,445,3389,6379];
-let lastScanData=null,scanStartTime=null,currentLang='tr';
+let lastScanData=null,scanStartTime=null,currentLang='tr',isLight=false;
+let scanHistory=JSON.parse(localStorage.getItem('sx_history')||'[]');
 
-const QUICK_PORTS=[
-    {port:22,service:'SSH',range:[22,22]},
-    {port:80,service:'HTTP',range:[80,80]},
-    {port:443,service:'HTTPS',range:[443,443]},
-    {port:3306,service:'MySQL',range:[3306,3306]},
-    {port:3389,service:'RDP',range:[3389,3389]},
-    {port:8080,service:'HTTP-Alt',range:[8080,8080]},
-];
+const PORT_INFO={
+    21:{desc:'FTP (File Transfer Protocol) - Dosya transferi icin kullanilir. Sifresiz veri aktarimi yaptigindan yuksek risk tasir.'},
+    22:{desc:'SSH (Secure Shell) - Guvenli uzak erisim protokolu. Genellikle guvenlidir ancak zayif sifre kullanimi tehlike olusturabilir.'},
+    23:{desc:'Telnet - Sifresiz uzak erisim protokolu. Tum veri duzz metin olarak iletilir, kullanimi onerilmez.'},
+    25:{desc:'SMTP - E-posta gonderme protokolu. Acik relay konfigurasyonu spam/relay saldirilarinda kullanilabilir.'},
+    53:{desc:'DNS - Alan adi cozumleme servisi. DNS amplifikasyon saldirilarina karsi dikkatli olunmali.'},
+    80:{desc:'HTTP - Sifresiz web trafigi. Hassas veriler icin HTTPS (443) tercih edilmelidir.'},
+    110:{desc:'POP3 - E-posta alma protokolu. Eski ve genellikle sifresiz surum kullaniliyorsa risk olusturur.'},
+    143:{desc:'IMAP - E-posta erisim protokolu. TLS olmadan kullanilmasi onerilmez.'},
+    443:{desc:'HTTPS - Sifrelenmis web trafigi. SSL/TLS sertifikasinin gecerli olmasi onemlidir.'},
+    445:{desc:'SMB - Windows dosya paylasim protokolu. WannaCry gibi fidye yazilimi saldirilarina karsı son derece hassastir.'},
+    3306:{desc:'MySQL - Veritabani sunucusu. Internete dogrudan acik olmamalidir, guvenceli bir agda olmalidur.'},
+    3389:{desc:'RDP - Uzak Masaustu Protokolu. Kaba kuvvet ve BlueKeep gibi aciklara karsi yuksek risk tasir.'},
+    5432:{desc:'PostgreSQL - Veritabani sunucusu. Disariya acik olmamali, guvenceli ag icinde kullanilmalidir.'},
+    6379:{desc:'Redis - Bellek ici veri deposu. Kimlik dogrulamasz konfigurasyonlarda tam erisim saglanabilir, kritik risk.'},
+    8080:{desc:'HTTP-Alt - Alternatif web portu. Gelistirme sunucusu veya proxy olabilir, guvenligi kontrol edilmeli.'},
+    8443:{desc:'HTTPS-Alt - Alternatif HTTPS portu. Sertifika ve konfigurasyonu dogrulanmalidir.'},
+};
 
 const T={
     tr:{
         logoSub:'OTOMATIK AG GUVENLIK DENETCISI v1.0.0',themeLabel:'TEMA:',langBtn:'EN',statusText:'AKTIF',
-        sideNavTitle:'NAVIGASYON',navPortText:'PORT TARAMA',navNetText:'AG KESFI',navRepText:'RAPOR',
-        sideQuickTitle:'HIZLI ERISIM',sideStatTitle:'SON TARAMA',
-        sideOpenLabel:'ACIK PORT',sideRiskLabel:'RISK NOTU',sideSureLabel:'SURE',sideInfoTitle:'SISTEM',
-        welcomeTitle:'⚡ SIGNAL-X HAZIR',
-        welcomeDesc:'Hedef IP adresini girin, port araligini belirleyin ve taramayi baslatin.\nAcik portlar, servis tespiti, OS tahmini ve guvenlik puani otomatik hesaplanir.',
+        sideNavTitle:'NAVIGASYON',navPortText:'PORT TARAMA',navNetText:'AG KESFI',navHistText:'GECMIS',navRepText:'RAPOR',
+        sideQuickTitle:'HIZLI ERISIM',sideStatTitle:'SON TARAMA',sideOpenLabel:'ACIK PORT',sideRiskLabel:'RISK NOTU',sideSureLabel:'SURE',sideInfoTitle:'SISTEM',
+        welcomeTitle:'⚡ SIGNAL-X HAZIR',welcomeDesc:'Hedef IP adresini girin, port araligini belirleyin ve taramayi baslatin.',
         wStatService:'SERVIS TANIMI',wStatRisk:'RISKLI PORT',wStatScore:'GUVENLIK NOTU',
         tipsTitle:'// KULLANIM IPUCLARI',
         tip1:'Hizli erisim butonlariyla yaygin portlari tek tikla doldurabilirsiniz.',
-        tip2:'Port araligi kucuk tutulursa tarama daha hizli tamamlanir (ornek: 1-1024).',
-        tip3:'21, 23, 445, 3389, 6379 portlari yuksek riskli kabul edilir.',
-        tip4:'Tarama sonrasi Rapor sekmesinden MD veya JSON formatinda export edebilirsiniz.',
+        tip2:'Port araligi kucuk tutulursa tarama daha hizli tamamlanir.',
+        tip3:'Port satirina tiklayarak detayli risk bilgisi gorebilirsiniz.',
+        tip4:'Gecmis sekmesinden onceki taramalara geri donebilirsiniz.',
         portCardTitle:'PORT TARAMA MODULU',labelTargetIP:'HEDEF IP',labelStart:'BASLANGIC PORT',labelEnd:'BITIS PORT',
-        scanBtn:'▶ TARA',scanningBtn:'⏳ TARANIYOR...',
+        scanBtn:'▶ TARA',scanningBtn:'⏳ TARANIYOR...',pingBtnText:'PING TEST',
         progressText:'// HEDEF TARANIYOR...',progressSub:'TCP baglantilari deneniyor...',
         labelOS:'ISLETIM SISTEMI',labelScore:'GUVENLIK NOTU',labelOpen:'ACIK PORT',labelRisk:'YUKSEK RISK',labelTime:'TARAMA SURESI',
-        riskMeterTitle:'RISK GOSTERGESI',portListTitle:'ACIK PORT LISTESI',terminalTitle:'TARAMA KAYITLARI',
+        riskMeterTitle:'RISK GOSTERGESI',portListTitle:'ACIK PORT LISTESI',clickHint:'↗ DETAY ICIN TIKLA',terminalTitle:'TARAMA KAYITLARI',
         thPort:'PORT',thService:'SERVIS',thRisk:'RISK',thStatus:'DURUM',
-        badgeOpen:'ACIK',badgeHigh:'YUKSEK RISK',badgeMed:'ORTA RISK',badgeLow:'DUSUK RISK',
-        noPort:'// ACIK PORT BULUNAMADI',
+        badgeOpen:'ACIK',badgeHigh:'YUKSEK RISK',badgeMed:'ORTA RISK',badgeLow:'DUSUK RISK',noPort:'// ACIK PORT BULUNAMADI',
         metaTarget:'HEDEF',metaTime:'SURE',metaScanned:'TARANAN',metaPorts:'PORT',
         netCardTitle:'AG KESFI MODULU',labelBaseIP:'AG ADRESI',labelStartIP:'BASLANGIC',labelEndIP:'BITIS',
-        netBtn:'▶ TARA',netScanningBtn:'⏳ TARANIYOR...',
-        labelDevices:'BULUNAN CIHAZ',netListTitle:'AKTIF CIHAZLAR',
+        netBtn:'▶ TARA',netScanningBtn:'⏳ TARANIYOR...',labelDevices:'BULUNAN CIHAZ',netListTitle:'AKTIF CIHAZLAR',
         thIP:'IP ADRESI',thDevStatus:'DURUM',badgeAlive:'AKTIF',noDevice:'// AKTIF CIHAZ BULUNAMADI',
+        histCardTitle:'TARAMA GECMISI',clearHistBtn:'✕ TEMIZLE',historyEmpty:'// HENUZ TARAMA YAPILMADI',
         reportCardTitle:'GUVENLIK RAPORU',reportEmpty:'// HENUZ TARAMA YAPILMADI\n// ONCE PORT TARAMA SEKMESINDEN BIR TARAMA BASLATIN',
         btnCopy:'📋 KOPYALA',btnMD:'⬇ MD INDIR',btnJSON:'⬇ JSON INDIR',
         alertIP:'IP adresi girin!',alertNet:'Ag adresi girin!',alertJSON:'ONCE TARAMA YAPIN!',alertCopied:'RAPOR KOPYALANDI',alertErr:'HATA: ',
+        modalTitle:'PORT DETAYI',mlRisk:'RISK SEVIYESI',mlProto:'PROTOKOL',mlStatus:'DURUM',modalStatus:'ACIK',
+        pingOK:'HEDEF AKTIF',pingFail:'HEDEF ERISILEMEZ',pingWait:'TEST EDILIYOR...',
     },
     en:{
         logoSub:'AUTOMATIC NETWORK SECURITY AUDITOR v1.0.0',themeLabel:'THEME:',langBtn:'TR',statusText:'ACTIVE',
-        sideNavTitle:'NAVIGATION',navPortText:'PORT SCAN',navNetText:'NET DISCOVERY',navRepText:'REPORT',
-        sideQuickTitle:'QUICK ACCESS',sideStatTitle:'LAST SCAN',
-        sideOpenLabel:'OPEN PORTS',sideRiskLabel:'RISK GRADE',sideSureLabel:'TIME',sideInfoTitle:'SYSTEM',
-        welcomeTitle:'⚡ SIGNAL-X READY',
-        welcomeDesc:'Enter the target IP, set the port range and start scanning.\nOpen ports, service detection, OS guess and security grade are calculated automatically.',
+        sideNavTitle:'NAVIGATION',navPortText:'PORT SCAN',navNetText:'NET DISCOVERY',navHistText:'HISTORY',navRepText:'REPORT',
+        sideQuickTitle:'QUICK ACCESS',sideStatTitle:'LAST SCAN',sideOpenLabel:'OPEN PORTS',sideRiskLabel:'RISK GRADE',sideSureLabel:'TIME',sideInfoTitle:'SYSTEM',
+        welcomeTitle:'⚡ SIGNAL-X READY',welcomeDesc:'Enter the target IP, set the port range and start scanning.',
         wStatService:'SERVICE DEFS',wStatRisk:'RISKY PORTS',wStatScore:'SECURITY GRADE',
         tipsTitle:'// USAGE TIPS',
         tip1:'Use quick access buttons to fill common ports with one click.',
-        tip2:'A smaller port range will complete the scan faster (e.g. 1-1024).',
-        tip3:'Ports 21, 23, 445, 3389, 6379 are considered high risk.',
-        tip4:'After scanning, export results in MD or JSON format from the Report tab.',
+        tip2:'A smaller port range completes the scan faster.',
+        tip3:'Click on a port row to see detailed risk information.',
+        tip4:'Return to previous scans from the History tab.',
         portCardTitle:'PORT SCAN MODULE',labelTargetIP:'TARGET IP',labelStart:'START PORT',labelEnd:'END PORT',
-        scanBtn:'▶ SCAN',scanningBtn:'⏳ SCANNING...',
+        scanBtn:'▶ SCAN',scanningBtn:'⏳ SCANNING...',pingBtnText:'PING TEST',
         progressText:'// SCANNING TARGET...',progressSub:'Testing TCP connections...',
         labelOS:'OPERATING SYSTEM',labelScore:'SECURITY GRADE',labelOpen:'OPEN PORTS',labelRisk:'HIGH RISK',labelTime:'SCAN DURATION',
-        riskMeterTitle:'RISK METER',portListTitle:'OPEN PORT LIST',terminalTitle:'SCAN LOGS',
+        riskMeterTitle:'RISK METER',portListTitle:'OPEN PORT LIST',clickHint:'↗ CLICK FOR DETAILS',terminalTitle:'SCAN LOGS',
         thPort:'PORT',thService:'SERVICE',thRisk:'RISK',thStatus:'STATUS',
-        badgeOpen:'OPEN',badgeHigh:'HIGH RISK',badgeMed:'MEDIUM RISK',badgeLow:'LOW RISK',
-        noPort:'// NO OPEN PORTS FOUND',
+        badgeOpen:'OPEN',badgeHigh:'HIGH RISK',badgeMed:'MEDIUM RISK',badgeLow:'LOW RISK',noPort:'// NO OPEN PORTS FOUND',
         metaTarget:'TARGET',metaTime:'TIME',metaScanned:'SCANNED',metaPorts:'PORTS',
         netCardTitle:'NETWORK DISCOVERY MODULE',labelBaseIP:'NETWORK ADDRESS',labelStartIP:'START',labelEndIP:'END',
-        netBtn:'▶ SCAN',netScanningBtn:'⏳ SCANNING...',
-        labelDevices:'DEVICES FOUND',netListTitle:'ACTIVE DEVICES',
+        netBtn:'▶ SCAN',netScanningBtn:'⏳ SCANNING...',labelDevices:'DEVICES FOUND',netListTitle:'ACTIVE DEVICES',
         thIP:'IP ADDRESS',thDevStatus:'STATUS',badgeAlive:'ACTIVE',noDevice:'// NO ACTIVE DEVICES FOUND',
+        histCardTitle:'SCAN HISTORY',clearHistBtn:'✕ CLEAR',historyEmpty:'// NO SCANS YET',
         reportCardTitle:'SECURITY REPORT',reportEmpty:'// NO SCAN PERFORMED YET\n// START A SCAN FROM THE PORT SCAN TAB',
         btnCopy:'📋 COPY',btnMD:'⬇ DOWNLOAD MD',btnJSON:'⬇ DOWNLOAD JSON',
         alertIP:'Please enter an IP address!',alertNet:'Please enter a network address!',alertJSON:'PLEASE RUN A SCAN FIRST!',alertCopied:'REPORT COPIED',alertErr:'ERROR: ',
+        modalTitle:'PORT DETAILS',mlRisk:'RISK LEVEL',mlProto:'PROTOCOL',mlStatus:'STATUS',modalStatus:'OPEN',
+        pingOK:'TARGET ACTIVE',pingFail:'TARGET UNREACHABLE',pingWait:'TESTING...',
     }
 };
 
 function t(k){return T[currentLang][k]||k;}
 
 function applyLang(){
-    const keys=['logoSub','themeLabel','langBtn','statusText','sideNavTitle','navPortText','navNetText','navRepText',
+    const keys=['logoSub','themeLabel','langBtn','statusText','sideNavTitle','navPortText','navNetText','navHistText','navRepText',
         'sideQuickTitle','sideStatTitle','sideOpenLabel','sideRiskLabel','sideSureLabel','sideInfoTitle',
         'welcomeTitle','wStatService','wStatRisk','wStatScore','tipsTitle','tip1','tip2','tip3','tip4',
-        'portCardTitle','labelTargetIP','labelStart','labelEnd','progressText','progressSub',
-        'labelOS','labelScore','labelOpen','labelRisk','labelTime','riskMeterTitle','portListTitle','terminalTitle',
+        'portCardTitle','labelTargetIP','labelStart','labelEnd','pingBtnText','progressText','progressSub',
+        'labelOS','labelScore','labelOpen','labelRisk','labelTime','riskMeterTitle','portListTitle','clickHint','terminalTitle',
         'thPort','thService','thRisk','thStatus','netCardTitle','labelBaseIP','labelStartIP','labelEndIP',
-        'labelDevices','netListTitle','thIP','thDevStatus','reportCardTitle','btnCopy','btnMD','btnJSON'];
+        'labelDevices','netListTitle','thIP','thDevStatus','histCardTitle','clearHistBtn','historyEmpty',
+        'reportCardTitle','btnCopy','btnMD','btnJSON','modalTitle','mlRisk','mlProto','mlStatus'];
     keys.forEach(k=>{const el=document.getElementById(k);if(el)el.textContent=t(k);});
     document.getElementById('scanBtn').textContent=t('scanBtn');
     document.getElementById('netBtn').textContent=t('netBtn');
     if(!lastScanData) document.getElementById('reportContent').textContent=t('reportEmpty');
     renderQuickPorts();
+    renderHistory();
 }
 
 function toggleLang(){currentLang=currentLang==='tr'?'en':'tr';applyLang();}
 
-function renderQuickPorts(){
-    const container=document.getElementById('quickPortsList');
-    container.innerHTML='';
-    QUICK_PORTS.forEach(qp=>{
-        const btn=document.createElement('div');
-        btn.className='quick-port-btn';
-        btn.innerHTML=`<span class="qp-port">${qp.port}</span><span class="qp-service">${qp.service}</span><span class="qp-arrow">▸</span>`;
-        btn.onclick=()=>{
-            document.getElementById('target').focus();
-            document.getElementById('startPort').value=qp.range[0];
-            document.getElementById('endPort').value=qp.range[1];
-        };
-        container.appendChild(btn);
-    });
-}
-
-function updateClock(){
-    const now=new Date();
-    const hh=String(now.getHours()).padStart(2,'0');
-    const mm=String(now.getMinutes()).padStart(2,'0');
-    const ss=String(now.getSeconds()).padStart(2,'0');
-    document.getElementById('headerClock').textContent=`${hh}:${mm}:${ss}`;
-    const dd=String(now.getDate()).padStart(2,'0');
-    const mo=String(now.getMonth()+1).padStart(2,'0');
-    const yy=now.getFullYear();
-    document.getElementById('headerDate').textContent=`${dd}.${mo}.${yy}`;
+function toggleLight(){
+    isLight=!isLight;
+    if(isLight){
+        document.body.classList.add('light-mode');
+        document.getElementById('lightModeBtn').textContent='🌙';
+    }else{
+        document.body.classList.remove('light-mode');
+        document.getElementById('lightModeBtn').textContent='☀';
+    }
 }
 
 function setTheme(theme,btn){
-    document.body.className=theme;
+    const classes=['theme-matrix','theme-danger','theme-cyber','theme-gold'];
+    classes.forEach(c=>document.body.classList.remove(c));
+    if(isLight) document.body.classList.add('light-mode');
+    if(theme) document.body.classList.add(theme);
     document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
 }
@@ -632,20 +627,130 @@ function switchTab(tab,el){
     document.getElementById(tab).classList.add('active');
 }
 
+function renderQuickPorts(){
+    const QUICK=[{port:22,service:'SSH'},{port:80,service:'HTTP'},{port:443,service:'HTTPS'},{port:3306,service:'MySQL'},{port:3389,service:'RDP'},{port:8080,service:'HTTP-Alt'}];
+    const c=document.getElementById('quickPortsList');
+    c.innerHTML='';
+    QUICK.forEach(qp=>{
+        const btn=document.createElement('div');
+        btn.className='quick-port-btn';
+        btn.innerHTML=`<span class="qp-port">${qp.port}</span><span class="qp-service">${qp.service}</span><span class="qp-arrow">▸</span>`;
+        btn.onclick=()=>{document.getElementById('startPort').value=qp.port;document.getElementById('endPort').value=qp.port;};
+        c.appendChild(btn);
+    });
+}
+
 function getRiskBadge(port){
     if(RISK_PORTS.includes(port)) return `<span class="badge badge-risk">${t('badgeHigh')}</span>`;
     if(port<1024) return `<span class="badge badge-warn">${t('badgeMed')}</span>`;
     return `<span class="badge badge-low">${t('badgeLow')}</span>`;
 }
 
+function openPortModal(port,service){
+    const isRisk=RISK_PORTS.includes(port);
+    const isMed=port<1024&&!isRisk;
+    const riskText=isRisk?t('badgeHigh'):isMed?t('badgeMed'):t('badgeLow');
+    const riskColor=isRisk?'#ff3060':isMed?'#ff6400':'#00f0ff';
+    document.getElementById('modalPortNum').textContent=port;
+    document.getElementById('modalService').textContent=service||'Unknown';
+    document.getElementById('modalRisk').textContent=riskText;
+    document.getElementById('modalRisk').style.color=riskColor;
+    document.getElementById('modalStatus').textContent=t('modalStatus');
+    const info=PORT_INFO[port];
+    document.getElementById('modalDesc').textContent=info?info.desc:`Port ${port} - Bilinen bir servis tanimlamamiz bulunmuyor. Manuel inceleme onerilir.`;
+    document.getElementById('portModal').classList.add('open');
+}
+
+function closeModal(e){if(e.target===document.getElementById('portModal')) document.getElementById('portModal').classList.remove('open');}
+
 function addTerminalLine(text,color='#00ff41'){
     const log=document.getElementById('terminalLog');
     const line=document.createElement('div');
-    line.className='t-line';
-    line.style.color=color;
-    line.textContent=text;
-    log.appendChild(line);
-    log.scrollTop=log.scrollHeight;
+    line.className='t-line';line.style.color=color;line.textContent=text;
+    log.appendChild(line);log.scrollTop=log.scrollHeight;
+}
+
+function saveToHistory(data,elapsed,startPort,endPort){
+    const entry={
+        id:Date.now(),target:data.target,elapsed,startPort,endPort,
+        openCount:data.open_ports.length,score:data.security_score,
+        os:data.os_guess,date:new Date().toLocaleString(),data
+    };
+    scanHistory.unshift(entry);
+    if(scanHistory.length>20) scanHistory=scanHistory.slice(0,20);
+    localStorage.setItem('sx_history',JSON.stringify(scanHistory));
+    document.getElementById('historyBadge').textContent=scanHistory.length;
+    renderHistory();
+}
+
+function renderHistory(){
+    const list=document.getElementById('historyList');
+    if(scanHistory.length===0){
+        list.innerHTML=`<div class="history-empty">${t('historyEmpty')}</div>`;
+        return;
+    }
+    list.innerHTML='';
+    scanHistory.forEach(h=>{
+        const item=document.createElement('div');
+        item.className='history-item';
+        item.innerHTML=`
+            <div class="history-left">
+                <div class="history-target">${h.target}</div>
+                <div class="history-meta">${h.date} &nbsp;|&nbsp; Port: ${h.startPort}-${h.endPort} &nbsp;|&nbsp; ${h.elapsed}s</div>
+            </div>
+            <div class="history-right">
+                <span class="badge badge-open">${h.openCount} PORT</span>
+                <span class="score-badge score-${h.score}" style="width:32px;height:32px;font-size:14px">${h.score}</span>
+            </div>`;
+        item.onclick=()=>{
+            lastScanData=h.data;
+            scanStartTime=Date.now()-parseFloat(h.elapsed)*1000;
+            document.getElementById('welcomeScreen').style.display='none';
+            showScanResults(h.data,h.startPort,h.endPort);
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+            document.getElementById('port').classList.add('active');
+            document.querySelector('.nav-item').classList.add('active');
+        };
+        list.appendChild(item);
+    });
+}
+
+function clearHistory(){
+    scanHistory=[];
+    localStorage.removeItem('sx_history');
+    document.getElementById('historyBadge').textContent='0';
+    renderHistory();
+}
+
+async function doPingTest(){
+    const target=document.getElementById('target').value.trim();
+    if(!target){alert(t('alertIP'));return;}
+    const res=document.getElementById('pingResult');
+    res.style.display='inline-block';
+    res.className='ping-result ping-wait';
+    res.textContent=t('pingWait');
+    document.getElementById('pingBtn').disabled=true;
+    try{
+        const r=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({target,start_port:80,end_port:80})});
+        const d=await r.json();
+        if(d.success){
+            res.className='ping-result ping-ok';
+            res.textContent='✓ '+t('pingOK');
+        }else{
+            res.className='ping-result ping-fail';
+            res.textContent='✗ '+t('pingFail');
+        }
+    }catch(e){
+        res.className='ping-result ping-fail';
+        res.textContent='✗ '+t('pingFail');
+    }
+    document.getElementById('pingBtn').disabled=false;
+}
+
+function resetPing(){
+    document.getElementById('pingResult').style.display='none';
 }
 
 async function startScan(){
@@ -662,7 +767,6 @@ async function startScan(){
     document.getElementById('progressText').textContent=t('progressText');
     document.getElementById('progressSub').textContent=t('progressSub');
     scanStartTime=Date.now();
-
     const timerEl=document.getElementById('progressTimer');
     const interval=setInterval(()=>{timerEl.textContent=((Date.now()-scanStartTime)/1000).toFixed(1)+'s';},100);
 
@@ -673,6 +777,8 @@ async function startScan(){
         lastScanData=data;
         clearInterval(interval);
         document.getElementById('progressWrap').style.display='none';
+        const elapsed=((Date.now()-scanStartTime)/1000).toFixed(1);
+        saveToHistory(data,elapsed,startPort,endPort);
         showScanResults(data,startPort,endPort);
     }catch(e){
         clearInterval(interval);
@@ -692,8 +798,7 @@ function showScanResults(data,startPort,endPort){
     document.getElementById('scanMeta').innerHTML=`
         <div class="scan-meta-item">${t('metaTarget')}: <span>${data.target}</span></div>
         <div class="scan-meta-item">${t('metaTime')}: <span>${elapsed}s</span></div>
-        <div class="scan-meta-item">${t('metaScanned')}: <span>${totalPorts}</span> ${t('metaPorts')}</div>
-    `;
+        <div class="scan-meta-item">${t('metaScanned')}: <span>${totalPorts}</span> ${t('metaPorts')}</div>`;
 
     document.getElementById('statOS').textContent=data.os_guess;
     document.getElementById('statOpen').textContent=data.open_ports.length;
@@ -710,7 +815,6 @@ function showScanResults(data,startPort,endPort){
     document.getElementById('sideOpenVal').textContent=data.open_ports.length;
     document.getElementById('sideOpenBar').style.width=Math.min(100,data.open_ports.length*10)+'%';
     document.getElementById('sideRiskVal').textContent=score;
-    document.getElementById('sideRiskBar').style.width=riskPct+'%';
     document.getElementById('sideSureVal').textContent=elapsed+'s';
 
     const tbody=document.getElementById('portTable');
@@ -719,7 +823,7 @@ function showScanResults(data,startPort,endPort){
         tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;color:var(--dim);padding:40px;letter-spacing:2px">${t('noPort')}</td></tr>`;
     }else{
         data.open_ports.forEach(p=>{
-            tbody.innerHTML+=`<tr>
+            tbody.innerHTML+=`<tr class="clickable-row" onclick="openPortModal(${p.port},'${p.service||''}')">
                 <td><strong style="color:var(--neon);font-size:15px">${p.port}</strong></td>
                 <td>${p.service||'—'}</td>
                 <td>${getRiskBadge(p.port)}</td>
@@ -751,10 +855,8 @@ async function startNetScan(){
     const start=parseInt(document.getElementById('startIP').value);
     const end=parseInt(document.getElementById('endIP').value);
     if(!baseIP){alert(t('alertNet'));return;}
-
     const btn=document.getElementById('netBtn');
     btn.disabled=true;btn.textContent=t('netScanningBtn');
-
     try{
         const res=await fetch('/api/network',{method:'POST',headers:{'Content-Type':'application/json'},
             body:JSON.stringify({base_ip:baseIP,start,end})});
@@ -767,10 +869,7 @@ async function startNetScan(){
             tbody.innerHTML=`<tr><td colspan="2" style="text-align:center;color:var(--dim);padding:40px;letter-spacing:2px">${t('noDevice')}</td></tr>`;
         }else{
             data.devices.forEach(d=>{
-                tbody.innerHTML+=`<tr>
-                    <td><strong style="color:var(--neon)">${d.ip}</strong></td>
-                    <td><span class="badge badge-alive">${t('badgeAlive')}</span></td>
-                </tr>`;
+                tbody.innerHTML+=`<tr><td><strong style="color:var(--neon)">${d.ip}</strong></td><td><span class="badge badge-alive">${t('badgeAlive')}</span></td></tr>`;
             });
         }
     }catch(e){alert(t('alertErr')+e.message);}
@@ -781,10 +880,24 @@ function copyReport(){navigator.clipboard.writeText(document.getElementById('rep
 function downloadReport(){const blob=new Blob([document.getElementById('reportContent').textContent],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='signal-x-rapor.md';a.click();}
 function downloadJSON(){if(!lastScanData){alert(t('alertJSON'));return;}const blob=new Blob([JSON.stringify(lastScanData,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='signal-x-rapor.json';a.click();}
 
+function updateClock(){
+    const now=new Date();
+    const hh=String(now.getHours()).padStart(2,'0');
+    const mm=String(now.getMinutes()).padStart(2,'0');
+    const ss=String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('headerClock').textContent=`${hh}:${mm}:${ss}`;
+    const dd=String(now.getDate()).padStart(2,'0');
+    const mo=String(now.getMonth()+1).padStart(2,'0');
+    const yy=now.getFullYear();
+    document.getElementById('headerDate').textContent=`${dd}.${mo}.${yy}`;
+}
+
 // INIT
 updateClock();
 setInterval(updateClock,1000);
+document.getElementById('historyBadge').textContent=scanHistory.length;
 renderQuickPorts();
+renderHistory();
 applyLang();
 </script>
 </body>
