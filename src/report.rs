@@ -1,4 +1,4 @@
-﻿//! # report
+//! # report
 //! Guvenlik puani hesaplama ve Markdown rapor uretme modulu.
 //! Acik port sayisi ve riskli portlara gore A-F arasi not verir.
 
@@ -13,12 +13,6 @@ use crate::scanner::PortResult;
 ///
 /// # Harf Notlari
 /// - A: 90-100, B: 75-89, C: 60-74, D: 45-59, E: 30-44, F: 0-29
-///
-/// # Parametreler
-/// - `open_ports`: Acik portlarin listesi
-///
-/// # Donus Degeri
-/// "A", "B", "C", "D", "E" veya "F" harf notu
 pub fn security_score(open_ports: &[PortResult]) -> String {
     let riskli: Vec<u16> = vec![21, 23, 445, 3389, 6379];
     let mut puan: i32 = 100;
@@ -39,15 +33,6 @@ pub fn security_score(open_ports: &[PortResult]) -> String {
 }
 
 /// Tarama sonuclarindan Markdown formatinda guvenlik raporu uretir.
-///
-/// # Parametreler
-/// - `target`: Hedef IP adresi
-/// - `open_ports`: Acik portlarin listesi
-/// - `os_guess`: Tahmin edilen isletim sistemi
-/// - `score`: Hesaplanan guvenlik notu
-///
-/// # Donus Degeri
-/// Markdown formatinda rapor metni
 pub fn generate_markdown(
     target: &str,
     open_ports: &[PortResult],
@@ -60,10 +45,18 @@ pub fn generate_markdown(
     md.push_str(&format!("**Isletim Sistemi:** {}\n", os_guess));
     md.push_str(&format!("**Guvenlik Puani:** {}\n\n", score));
     md.push_str("## Acik Portlar\n\n");
-    md.push_str("| Port | Servis |\n");
-    md.push_str("|------|--------|\n");
+    md.push_str("| Port | Servis | Banner |\n");
+    md.push_str("|------|--------|--------|\n");
     for port in open_ports {
-        md.push_str(&format!("| {} | {} |\n", port.port, port.service));
+        let banner = if port.banner.is_empty() {
+            "—".to_string()
+        } else {
+            port.banner.clone()
+        };
+        md.push_str(&format!(
+            "| {} | {} | {} |\n",
+            port.port, port.service, banner
+        ));
     }
     if open_ports.is_empty() {
         md.push_str("Acik port bulunamadi.\n");
@@ -81,6 +74,7 @@ mod tests {
             port,
             open: true,
             service: "Test".to_string(),
+            banner: String::new(),
         }
     }
 

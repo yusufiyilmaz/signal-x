@@ -32,25 +32,24 @@ enum Commands {
 
 #[derive(Subcommand)]
 enum PentestModule {
-    /// TCP port tarama
+    /// TCP port tarama + banner grabbing
     PortScan {
         /// Hedef IP adresi
         target: String,
-
         /// Port araligi (ornek: 1-1024)
         #[arg(long, default_value = "1-1024")]
         range: String,
-
         /// Cikti formati: md veya json
         #[arg(long, default_value = "md")]
         format: String,
+        /// Baglanti timeout suresi (milisaniye)
+        #[arg(long, default_value = "200")]
+        timeout: u64,
     },
-
     /// Ag kesfi (ping sweep)
     NetDiscover {
         /// Ag adresi (ornek: 192.168.1)
         base_ip: String,
-
         /// Aralik (ornek: 1-254)
         #[arg(long, default_value = "1-254")]
         range: String,
@@ -65,7 +64,6 @@ async fn main() {
 
     match cli.command {
         None => {
-            // Web panel modu
             web::start().await;
         }
         Some(Commands::Pentest { module }) => match module {
@@ -73,8 +71,9 @@ async fn main() {
                 target,
                 range,
                 format,
+                timeout,
             } => {
-                run_port_scan(&target, &range, &format).await;
+                run_port_scan(&target, &range, &format, timeout).await;
             }
             PentestModule::NetDiscover { base_ip, range } => {
                 run_net_discover(&base_ip, &range).await;
@@ -84,7 +83,7 @@ async fn main() {
 }
 
 /// CLI port tarama modunu calistirir.
-async fn run_port_scan(target: &str, range: &str, format: &str) {
+async fn run_port_scan(target: &str, range: &str, format: &str, timeout_ms: u64) {
     use colored::Colorize;
 
     let ip: std::net::IpAddr = match target.parse() {
@@ -95,7 +94,6 @@ async fn run_port_scan(target: &str, range: &str, format: &str) {
         }
     };
 
-    // Port araligini parse et
     let parts: Vec<&str> = range.split('-').collect();
     if parts.len() != 2 {
         eprintln!("{}", "HATA: Aralik formati yanlis! Ornek: 1-1024".red());
@@ -105,12 +103,13 @@ async fn run_port_scan(target: &str, range: &str, format: &str) {
     let end: u16 = parts[1].parse().unwrap_or(1024);
 
     println!("{}", "[*] Signal-X Port Tarama Basladi".bright_cyan());
-    println!("[*] Hedef  : {}", target.bright_yellow());
-    println!("[*] Aralik : {}-{}", start, end);
-    println!("[*] Format : {}", format.bright_yellow());
+    println!("[*] Hedef   : {}", target.bright_yellow());
+    println!("[*] Aralik  : {}-{}", start, end);
+    println!("[*] Timeout : {}ms", timeout_ms);
+    println!("[*] Format  : {}", format.bright_yellow());
     println!("{}", "─".repeat(50).bright_black());
 
-    let open_ports = scanner::scan_range(ip, start, end).await;
+    let open_ports = scanner::scan_range(ip, start, end, timeout_ms).await;
     let os_guess = os_detect::guess_os(ip).await;
     let score = report::security_score(&open_ports);
 
@@ -125,11 +124,8 @@ async fn run_port_scan(target: &str, range: &str, format: &str) {
             println!("{}", serde_json::to_string_pretty(&output).unwrap());
         }
         _ => {
-            // Markdown format
             let md = report::generate_markdown(target, &open_ports, &os_guess, &score);
             println!("{}", md);
-
-            // Terminal ozet
             println!("{}", "─".repeat(50).bright_black());
             if open_ports.is_empty() {
                 println!("{}", "[+] Acik port bulunamadi.".green());
@@ -140,11 +136,20 @@ async fn run_port_scan(target: &str, range: &str, format: &str) {
                     } else {
                         "[+] ACIK".green().to_string()
                     };
-                    println!("    {} Port {}/tcp — {}", risk, p.port, p.service);
+                    let banner_info = if !p.banner.is_empty() {
+                        format!(" | {}", p.banner.bright_black())
+                    } else {
+                        String::new()
+                    };
+                    println!(
+                        "    {} Port {}/tcp — {}{}",
+                        risk, p.port, p.service, banner_info
+                    );
                 }
             }
             println!("{}", "─".repeat(50).bright_black());
             println!("[=] Guvenlik Notu: {}", score.bright_yellow());
+            println!("[=] OS Tespiti  : {}", os_guess.bright_yellow());
         }
     }
 }
