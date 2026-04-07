@@ -1,4 +1,4 @@
-# Signal-X — Port Scanner
+﻿# Signal-X — Port Scanner
 
 [![Rust](https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![CLI](https://img.shields.io/badge/Tool-CLI-blue)]()
@@ -220,4 +220,14 @@ Başlangıç: **100 puan**
 
 ## Lisans
 
+<<<<<<< HEAD
 MIT — Yusuf Yılmaz — İstinye Üniversitesi
+=======
+MIT — Yusuf Yilmaz — Istinye Universitesi
+
+
+
+
+
+>>>>>>> midterm/yusuf-yilmaz
+
