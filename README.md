@@ -16,7 +16,7 @@ Rust ile yazılmış, TCP port tarama, banner grabbing, servis imzası eşleşti
 | ![ISU Logo](https://www.istinye.edu.tr/sites/default/files/2025-07/isu_logo_tr-1.svg) | Sızma Testi Proje Ödevi |
 |---|---|
 | **Öğrenci Adı** | Yusuf Yılmaz |
-| **Öğrenci No.** | 2520191010 |
+| **Öğrenci No.** | 2520191013 |
 | **Öğretim Görevlisi** | Keyvan Arasteh Abbasabad |
 | **Ders Kodu & Adı** | BGT006 Sızma Testi |
 
