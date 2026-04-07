@@ -1,21 +1,38 @@
-﻿# Signal-X Mimari
+﻿# Signal-X Mimari Dokumani
+
+## Genel Bakis
+
+Signal-X, Rust ile yazilmis modüler bir ag guvenlik denetim aracidir.
 
 ## Moduller
 
-- **main.rs** - CLI giris noktasi (clap)
-- **scanner.rs** - Async TCP port tarama, banner grabbing, versiyon tespiti
-- **discovery.rs** - Ping sweep ile ag cihaz kesfi
-- **os_detect.rs** - TTL analizi ile OS tespiti
-- **report.rs** - Guvenlik puanlama (A-F) ve Markdown rapor
-- **web.rs** - Axum REST API, coklu hedef endpoint
+### scanner.rs
+- Async paralel TCP port tarama
+- Banner grabbing
+- Servis imzasi eslestirme
+- open/closed/filtered port tespiti
 
-## Veri Akisi
+### discovery.rs
+- Ping sweep ile ag cihaz kesfi
+- Paralel ping gondерimi
 
-Kullanici -> CLI/Web Panel -> web.rs -> scanner.rs -> PortResult -> report.rs -> JSON/Markdown
+### os_detect.rs
+- TTL analizi ile OS tespiti
+- Windows/Linux/Router tahmini
 
-## API
+### report.rs
+- A-F guvenlik puanlama sistemi
+- Markdown rapor uretimi
 
-- POST /api/scan - Tek hedef
-- POST /api/multiscan - Coklu hedef
-- POST /api/network - Ag kesfi
-- GET /api/health - Sunucu durumu
+### web.rs
+- Axum REST API
+- Coklu hedef tarama endpoint
+
+### main.rs
+- CLI giris noktasi (clap)
+- Web panel baslangici
+
+## API Akisi
+Client -> POST /api/scan -> web.rs -> scanner.rs -> report.rs -> JSON yanit
+Client -> POST /api/network -> web.rs -> discovery.rs -> JSON yanit
+Client -> POST /api/multiscan -> web.rs -> scanner.rs (paralel) -> JSON yanit

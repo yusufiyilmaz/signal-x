@@ -1,17 +1,20 @@
 ﻿# Katki Rehberi
 
-## Gelistirme
-
-`ash
+## Gelistirme Ortami
+```bash
 git clone https://github.com/yusufiyilmaz/signal-x.git
 cd signal-x
 cargo build
 cargo test
 ```
 
-## Kural
+## Kod Standartlari
 
-- Her ozellik icin ayri branch ac
-- PR acmadan once cargo clippy ve cargo fmt calistir
-- Her yeni ozellik icin unit test yaz
-- Commit mesajlari: feat/fix/docs/refactor/test
+- `cargo fmt` ile formatlama
+- `cargo clippy` ile lint kontrolu
+- Her yeni ozellik icin unit test ekle
+
+## Branch Yapisi
+
+- `main` - stabil surum
+- `midterm/isim-soyisim` - ogrenci branch
