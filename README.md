@@ -1,5 +1,12 @@
 ﻿# Signal-X
 
+| | Istinye Universitesi | Sizma Testi Proje Odevi |
+|---|---|---|
+| **Ogrenci Adi** | Yusuf Yilmaz | |
+| **Ogrenci No.** | [Numaran] | |
+| **Ogretim Gor. (Danisман)** | Keyvan Arasteh Abbasabad | |
+| **Ders Kodu & Adi** | BGT006 Sizma Testi | |
+
 [![CI](https://github.com/yusufiyilmaz/signal-x/actions/workflows/ci.yml/badge.svg)](https://github.com/yusufiyilmaz/signal-x/actions)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange?style=flat-square&logo=rust)](https://www.rust-lang.org)
 [![Lisans](https://img.shields.io/badge/lisans-MIT-blue?style=flat-square)](LICENSE)
@@ -192,3 +199,5 @@ cargo test -p pentester
 ## Lisans
 
 MIT — Yusuf Yilmaz — Istinye Universitesi
+
+
