@@ -1,52 +1,21 @@
-﻿
-<table>
+﻿# Signal-X
 
-<tr>
-
-<td><img src="https://upload.wikimedia.org/wikipedia/tr/7/72/Istinye_University_logo.png" width="120"/></td>
-
-<td><strong>İSTİNYE ÜNİVERSİTESİ</strong><br/>İSTANBUL</td>
-
-<td><strong>Sızma Testi Proje Ödevi</strong></td>
-
-</tr>
-
-</table>
+![Istinye Logo](https://upload.wikimedia.org/wikipedia/tr/6/69/%C4%B0stinye_%C3%9Cniversitesi_logo.png)
 
 | | |
-
 |---|---|
-
-| **Öğrenci Adı** | Yusuf Yılmaz |
-
-| **Öğrenci No.** |2520191013|
-
-| **Öğretim Gör. (Danışman)** | Keyvan Arasteh Abbasabad |
-
-| **Ders Kodu & Adı** | BGT006 Sızma Testi |
-
-# Signal-X
-
-
-| | Istinye Universitesi | Sizma Testi Proje Odevi |
-|---|---|---|
-| **Ogrenci Adi** | Yusuf Yilmaz | |
-| **Ogrenci No.** | [Numaran] | |
-| **Ogretim Gor. (Danisман)** | Keyvan Arasteh Abbasabad | |
-| **Ders Kodu & Adi** | BGT006 Sizma Testi | |
+| **Ogrenci Adi** | Yusuf Yilmaz |
+| **Ogrenci No.** | 2520191010 |
+| **Danisман / Instructor** | Keyvan Arasteh Abbasabad |
+| **Ders Kodu** | BGT006 Sizma Testi |
 
 [![CI](https://github.com/yusufiyilmaz/signal-x/actions/workflows/ci.yml/badge.svg)](https://github.com/yusufiyilmaz/signal-x/actions)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange?style=flat-square&logo=rust)](https://www.rust-lang.org)
 [![Lisans](https://img.shields.io/badge/lisans-MIT-blue?style=flat-square)](LICENSE)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
 [![Testler](https://img.shields.io/badge/testler-12%20gecti-green?style=flat-square)]()
 
-> Istinye Universitesi — SecOps Dersi — Prof. Keyvan Arasteh
-
-Rust ile yazilmis otomatik ag guvenlik denetim araci. TCP port tarama, banner grabbing, servis imzasi eslestirme, OS tespiti ve guvenlik puanlama sunar.
-
----
-
-## Icerik
+## Table of Contents
 
 - [Ozellikler](#ozellikler)
 - [Hizli Baslangic](#hizli-baslangic)
@@ -57,11 +26,9 @@ Rust ile yazilmis otomatik ag guvenlik denetim araci. TCP port tarama, banner gr
 - [API](#api)
 - [Guvenlik Puanlama](#guvenlik-puanlama)
 - [Testler](#testler)
+- [Demo](#demo)
 - [Ogrendiklerim](#ogrendiklerim)
 - [Referanslar](#referanslar)
-
----
-
 ## Ozellikler
 
 | Ozellik | Aciklama |
@@ -227,6 +194,7 @@ cargo test -p pentester
 ## Lisans
 
 MIT — Yusuf Yilmaz — Istinye Universitesi
+
 
 
 
