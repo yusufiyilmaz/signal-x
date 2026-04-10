@@ -114,7 +114,9 @@ async fn run_port_scan(target: &str, range: &str, format: &str, timeout_ms: u64,
     match format {
         "json" => {
             let output = serde_json::json!({"target":target,"os_guess":os_guess,"security_score":score,"open_ports":ports});
-            println!("{}", serde_json::to_string_pretty(&output).unwrap());
+            if let Ok(json) = serde_json::to_string_pretty(&output) {
+                println!("{}", json);
+            }
         }
         _ => {
             let md = report::generate_markdown(target, &ports, &os_guess, &score);
